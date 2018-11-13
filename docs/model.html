@@ -347,21 +347,82 @@ div.section {
 </details>
 </li>
 <li>
-<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>Repository version:</strong> ade297b </summary></p>
+<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>Repository version:</strong> 2ef754f </summary></p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility. The version displayed above was the version of the Git repository at the time these results were generated. <br><br> Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
 <pre><code>
 Ignored files:
     Ignored:    .Rhistory
     Ignored:    .Rproj.user/
+    Ignored:    docs/figure/
 
 Untracked files:
     Untracked:  analysis/experiment.Rmd
-    Untracked:  docs/figure/
 
 </code></pre>
 Note that any generated files, e.g. HTML, png, CSS, etc., are not included in this status report because it is ok for generated content to have uncommitted changes. </details>
 </li>
 </ul>
+<details> <summary> <small><strong>Expand here to see past versions:</strong></small> </summary>
+<ul>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+File
+</th>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+<th style="text-align:left;">
+Message
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+Rmd
+</td>
+<td style="text-align:left;">
+2ef754f
+</td>
+<td style="text-align:left;">
+Dongyue Xie
+</td>
+<td style="text-align:left;">
+2018-11-12
+</td>
+<td style="text-align:left;">
+wflow_publish(c(“analysis/index.Rmd”, “analysis/model.Rmd”,
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+html
+</td>
+<td style="text-align:left;">
+dd1a75b
+</td>
+<td style="text-align:left;">
+Dongyue Xie
+</td>
+<td style="text-align:left;">
+2018-11-12
+</td>
+<td style="text-align:left;">
+Build site.
+</td>
+</tr>
+</tbody>
+</table>
+</ul>
+<p></details></p>
 <hr />
 <div id="design" class="section level2">
 <h2>Design</h2>
@@ -403,82 +464,178 @@ Note that any generated files, e.g. HTML, png, CSS, etc., are not included in t
 <li><p>2050 measurements made on 1336 individuals on 54 dates. 167 rows have missing data.</p></li>
 <li><p>Summary of blocks and treatment</p></li>
 </ul>
+<pre class="r"><code>datax=read.csv(&#39;/Users/dongyue/Documents/phd y1t1/data analysis/archive_edi/Reich2018NaturePaperDataAug2018.csv&#39;)
+datax[580,4]=&#39;l1&#39;
+datax=datax[-c(25,26),]
+colnames(datax)[3]=&#39;trt&#39;
+colnames(datax)[4]=&#39;plot&#39;
+colnames(datax)[13]=&#39;vwc&#39;
+datax$plot=factor(datax$plot)
+summary(datax[,c(1,2,3)])</code></pre>
 </div>
 <div id="block-structures" class="section level2">
 <h2>Block structures</h2>
 <p>site by block:</p>
+<pre class="r"><code>xtabs(~ site + block, datax)</code></pre>
 <p>site by plot:</p>
+<pre class="r"><code>knitr::asis_output(&quot;\\scriptsize&quot;)
+xtabs(~ site+plot,datax)</code></pre>
 </div>
 <div id="block-structures-1" class="section level2">
 <h2>Block structures</h2>
 <p>block by plot:</p>
+<pre class="r"><code>knitr::asis_output(&quot;\\scriptsize&quot;)
+xtabs(~ block+plot,datax)</code></pre>
 </div>
 <div id="measurements" class="section level2">
 <h2>Measurements</h2>
 <ul>
 <li>summary of measurements</li>
 </ul>
+<pre class="r"><code>summary(datax[,c(10,11,12)])</code></pre>
 </div>
 <div id="measurements-1" class="section level2">
 <h2>Measurements</h2>
+<pre class="r"><code>par(mfrow=c(1,2))
+hist(datax$Asat,breaks=20,main=&#39;Photosynthesis&#39;)
+hist(datax$gs,breaks=20,main=&#39;leaf diffusive conductance&#39;)</code></pre>
 </div>
 <div id="measurements-2" class="section level2">
 <h2>Measurements</h2>
 <ul>
 <li>summary of measurements</li>
 </ul>
+<pre class="r"><code>summary(datax[,c(13,14,15)])</code></pre>
 </div>
 <div id="treatment-vs-asat" class="section level2">
 <h2>Treatment vs Asat</h2>
+<pre class="r"><code>par(mfrow=c(1,3))
+# treatment vs asat
+boxplot(Asat~trt,data=datax,main=&#39;box-plot: Asat - treatment&#39;,ylab=&#39;Asat&#39;)
+boxplot(Asat~trt,data=datax[datax$site==&#39;hwrc&#39;,],main=&#39;box-plot: Asat - treatment, hwrc&#39;,ylab=&#39;Asat&#39;)
+boxplot(Asat~trt,data=datax[datax$site==&#39;cfc&#39;,],main=&#39;box-plot: Asat - treatment, cfc&#39;,ylab=&#39;Asat&#39;)</code></pre>
 </div>
 <div id="treatment-vs-leaf-diffusive-conductance" class="section level2">
 <h2>Treatment vs leaf diffusive conductance</h2>
+<pre class="r"><code>par(mfrow=c(1,3))
+# treatment vs asat
+boxplot(gs~trt,data=datax,main=&#39;box-plot: gs - treatment&#39;,ylab=&#39;gs&#39;)
+boxplot(gs~trt,data=datax[datax$site==&#39;hwrc&#39;,],main=&#39;box-plot: gs - treatment, hwrc&#39;,ylab=&#39;gs&#39;)
+boxplot(gs~trt,data=datax[datax$site==&#39;cfc&#39;,],main=&#39;box-plot: gs - treatment, cfc&#39;,ylab=&#39;gs&#39;)</code></pre>
 </div>
 <div id="treatment-vs-vwc" class="section level2">
 <h2>Treatment vs VWC</h2>
+<pre class="r"><code>par(mfrow=c(1,3))
+# treatment vs asat
+boxplot(vwc~trt,data=datax,main=&#39;box-plot: vwc - treatment&#39;,ylab=&#39;vwc&#39;)
+boxplot(vwc~trt,data=datax[datax$site==&#39;hwrc&#39;,],main=&#39;box-plot: vwc - treatment, hwrc&#39;,ylab=&#39;vwc&#39;)
+boxplot(vwc~trt,data=datax[datax$site==&#39;cfc&#39;,],main=&#39;box-plot: vwc - treatment, cfc&#39;,ylab=&#39;vwc&#39;)</code></pre>
 </div>
 <div id="pairs-plot" class="section level2">
 <h2>Pairs plot</h2>
+<pre class="r"><code>pairs(datax[,c(10,11,12,13,14,15)],pch=&#39;.&#39;)</code></pre>
 </div>
 <div id="speicies-specific-plots" class="section level2">
 <h2>Speicies specific plots</h2>
 <p>broadleaves: maple(aceru,acesa), birch(betpa), oak(quema, queru), aspen(poptr), Buckthorn(rhaca)</p>
 <p>needle leaves: fir(abiba), spruce(picgl), pine(pinba,pinst).</p>
+<pre class="r"><code>species=c(&quot;aceru&quot;, &quot;acesa&quot;, &#39;betpa&#39;, &quot;quema&quot;, &quot;queru&quot;, &#39;poptr&#39;, &#39;rhaca&#39;, &#39;abiba&#39;, &#39;picgl&#39;, &quot;pinba&quot;, &quot;pinst&quot;)
+par(mfrow=c(4,6))
+for (sp in species) {
+  dat=datax[datax$species==sp,]
+  boxplot(Asat~trt,data=dat[dat$site==&#39;cfc&#39;,],main=paste(sp,&#39;, cfc&#39;))
+  boxplot(Asat~trt,data=dat[dat$site==&#39;hwrc&#39;,],main=paste(sp,&#39;, hwrc&#39;))
+}</code></pre>
 </div>
 <div id="photosynthesis-vwc" class="section level2">
 <h2>Photosynthesis ~ VWC</h2>
+<pre class="r"><code>par(mfrow=c(4,3))
+for (sp in species) {
+  dat=datax[datax$species==sp,]
+  amb=lm(Asat~vwc,data=dat[dat$trt==&#39;ambient&#39;,])
+  
+  warm=lm(Asat~vwc,data=dat[dat$trt==&#39;warmed&#39;,])
+  plot(Asat~vwc,data=dat,main=sp,ylab=&#39;Photosynthesis&#39;,
+       col=ifelse(dat$trt==&#39;ambient&#39;,4,2))
+  xx=seq(0.05,0.27,length.out = 100)
+  lines(amb$model$vwc,amb$fitted.values,col=4,lwd=2)
+  lines(warm$model$vwc,warm$fitted.values,col=2,lwd=2)
+}</code></pre>
 </div>
 <div id="leaf-diffusive-conductance-vwc" class="section level2">
 <h2>Leaf diffusive conductance ~ VWC</h2>
+<pre class="r"><code>par(mfrow=c(4,3))
+for (sp in species) {
+  dat=datax[datax$species==sp,]
+  amb=lm(gs~vwc,data=dat[dat$trt==&#39;ambient&#39;,])
+  
+  warm=lm(gs~vwc,data=dat[dat$trt==&#39;warmed&#39;,])
+  plot(gs~vwc,data=dat,main=sp,ylab=&#39;Leaf diffusive conductance&#39;,
+       col=ifelse(dat$trt==&#39;ambient&#39;,4,2))
+  xx=seq(0.05,0.27,length.out = 100)
+  lines(amb$model$vwc,amb$fitted.values,col=4,lwd=2)
+  lines(warm$model$vwc,warm$fitted.values,col=2,lwd=2)
+}</code></pre>
 </div>
 <div id="modelling" class="section level2">
 <h2>Modelling</h2>
 <p>Response: photosynthesis; fixed effect: treatment, species, VWC, Tleaf, VPG; random effects: site, block, plot.</p>
 <p>Compare 5-way interaction and 4 way interaction model, <code>anova(mod4, full.mod)</code>:</p>
+<pre class="r"><code>library(lme4)
+knitr::asis_output(&quot;\\scriptsize&quot;)
+full.mod=lmer(Asat~trt*species*vwc*tleaf*VPG+(1|site)+(1|block)+(1|plot),data=datax,REML = F)
+mod4=lmer(Asat~(trt+species+vwc+tleaf+VPG)^4+(1|site)+(1|block)+(1|plot),data=datax,REML = F)
+mod3=lmer(Asat~(trt+species+vwc+tleaf+VPG)^3+(1|site)+(1|block)+(1|plot),data=datax,REML = F)
+mod2=lmer(Asat~(trt+species+vwc+tleaf+VPG)^2+(1|site)+(1|block)+(1|plot),data=datax,REML = F)
+anova(mod4,full.mod)</code></pre>
 </div>
 <div id="modelling-1" class="section level2">
 <h2>Modelling</h2>
 <p>Compare 4-way interaction and 3-way interaction model:</p>
+<pre class="r"><code>knitr::asis_output(&quot;\\scriptsize&quot;)
+anova(mod3,mod4)</code></pre>
 <p>So probably a 3-way interaction model could explain the data well.</p>
 </div>
 <div id="modelling---significant-effects-and-interactions" class="section level2">
 <h2>Modelling - Significant effects and interactions?</h2>
 <p>Use <code>drop1</code> function in R which performs Chisq test on single term deletion:</p>
+<pre class="r"><code>library(car)
+knitr::asis_output(&quot;\\tiny&quot;)
+drop1(mod4,test = &#39;Chisq&#39;)</code></pre>
 </div>
 <div id="modelling---significant-effects-and-interactions-1" class="section level2">
 <h2>Modelling - Significant effects and interactions?</h2>
 <p>3-way interaction model</p>
+<pre class="r"><code>knitr::asis_output(&quot;\\tiny&quot;)
+drop1(mod3,test = &#39;Chisq&#39;)</code></pre>
 </div>
 <div id="modelling---significant-effects-and-interactions-2" class="section level2">
 <h2>Modelling - Significant effects and interactions?</h2>
 <p>2-way interaction model</p>
+<pre class="r"><code>knitr::asis_output(&quot;\\tiny&quot;)
+drop1(mod2,test = &#39;Chisq&#39;)</code></pre>
 </div>
 <div id="random-effects" class="section level2">
 <h2>Random effects</h2>
+<pre class="r"><code>mod4reml=lmer(Asat~(trt+species+vwc+tleaf+VPG)^4+(1|site)+(1|block)+(1|plot),data=datax)
+VarCorr(mod4reml)</code></pre>
 <p>Is variance parameter of plot equals to 0? LR test gives p-value:</p>
+<pre class="r"><code>mod4p=lmer(Asat~(trt+species+vwc+tleaf+VPG)^4+(1|site)+(1|block),data=datax,REML = F)
+G = -2 * logLik(mod4p) + 2 * logLik(mod4)
+pchisq(as.numeric(G), df=1, lower.tail=F)</code></pre>
 </div>
 <div id="random-slope" class="section level2">
 <h2>Random slope?</h2>
+<pre class="r"><code>pp=levels(datax$plot)
+ll=lm(Asat~vwc,data=datax[datax$plot==pp[1],])
+plot(ll$model$vwc,ll$fitted.values,type=&#39;l&#39;,ylim=c(4,17),xlim=c(0.05,0.27),col=2,ylab=&#39;Photosynthesis&#39;,xlab=&#39;vwc&#39;,main=&#39;Phototsynthesis v.s. vwc for each plot&#39;)
+legend(&#39;bottomright&#39;,c(&#39;ambient&#39;,&#39;warmed&#39;),lty=c(1,1),col=c(4,2))
+
+for (p in pp[-1]) {
+  ll=lm(Asat~vwc,data=datax[datax$plot==p,])
+  if(datax[datax$plot==p,][1,]$trt==&#39;ambient&#39;){cc=4}else{cc=2}
+  lines(ll$model$vwc,ll$fitted.values,col=cc)
+}</code></pre>
 </div>
 <div id="to-do" class="section level2">
 <h2>To do …</h2>
@@ -492,11 +649,98 @@ Note that any generated files, e.g. HTML, png, CSS, etc., are not included in t
 <p>For now, only consider random intercepts, then <span class="math inline">\(U_{\cdot j}\sim_{iid} N(0,\Sigma_r)\)</span> where <span class="math inline">\(\Sigma_r=(V_1\otimes I_1)\oplus (V_2\otimes I_2)\oplus ... \oplus (V_b\otimes I_b)\)</span>, <span class="math inline">\(b\)</span> is the number of random effects(sites, blocks,…); If only consider interceots, each <span class="math inline">\(V\)</span> here is an univairate variance, the dimension of corresponding <span class="math inline">\(I\)</span> is the number of levels in that random effect(say if there are 3 sites then <span class="math inline">\(I=diag(1,1,1)\)</span>). Note: for simplicity we assume the random effects are independent aross different reponses(this is why we put iid above). For random error: <span class="math inline">\(E_{i\cdot}\sim_{iid} N(0,\Sigma_{err})\)</span> where <span class="math inline">\(\Sigma_{err})\in R^{m\times m}\)</span> for <span class="math inline">\(i= 1,...,N\)</span>.</p>
 <p>This is model is not easy to fit. One possible way to fix this is to transform the data into univariate response by adding indicators for response.</p>
 <p><span class="math inline">\(y=X\beta+Zu+\epsilon\)</span> where <span class="math inline">\(y\in R^{Nm}\)</span>, <span class="math inline">\(\beta\in R^{p+1}\)</span> where the extra 1 is for response indicator.</p>
+<pre class="r"><code>library(MCMCglmm)
+datax=read.csv(&#39;/Users/dongyue/Documents/phd y1t1/data analysis/archive_edi/Reich2018NaturePaperDataAug2018.csv&#39;)
+datax[580,4]=&#39;l1&#39;
+datax=datax[-c(25,26,580),]
+colnames(datax)[3]=&#39;trt&#39;
+colnames(datax)[4]=&#39;plot&#39;
+colnames(datax)[13]=&#39;vwc&#39;
+datax$plot=factor(datax$plot)
+#munupulate data set
+datas=datax
+#year:doy as factor
+datas$day=factor(datas$year):factor(datas$doy)
+#species two categories: fir(abiba), spruce(picgl), pine(pinba,pinst).
+needle=c(&#39;abiba&#39;,&#39;picgl&#39;,&#39;pinba&#39;,&#39;pinst&#39;)
+datas$species2=factor(ifelse(datas$species %in% needle,&#39;needle&#39;,&#39;broad&#39;))
+
+#######scale data
+library(dplyr)
+datass = datas %&gt;% mutate_if(colnames(datas)%in%c(&#39;Asat&#39;,&#39;gs&#39;,&#39;ci&#39;,&#39;vwc&#39;,&#39;tleaf&#39;,&#39;VPG&#39;),scale)
+
+#multivariate model
+#idh structure of random components
+mulmod1=MCMCglmm(cbind(Asat,gs,vwc,tleaf,VPG,ci)~trait*trt*species2,
+                random=~idh(trait):site+idh(trait):block+idh(trait):plot+idh(trait):day,rcov=~us(trait):units,
+                family = c(&quot;gaussian&quot;,&quot;gaussian&quot;,&quot;gaussian&quot;,&quot;gaussian&quot;,&quot;gaussian&quot;,&quot;gaussian&quot;),
+                data=datass)
+
+#species2 as random effects too,remove VPG and ci
+s.time=Sys.time()
+mulmod2=MCMCglmm(cbind(Asat,gs,vwc,tleaf)~trait*trt,
+                random=~idh(trait):site+idh(trait):block+idh(trait):plot+idh(trait):day+idh(trait):species2,rcov=~us(trait):units,
+                family = c(&quot;gaussian&quot;,&quot;gaussian&quot;,&quot;gaussian&quot;,&quot;gaussian&quot;),
+                data=datass,nitt=30000,burnin = 15000,thin = 10)
+e.time=Sys.time()
+
+# The differences between needle/broadleaf are huge
+unimod.needle=lmer(Asat~trt+(1|site)+(1|block)+(1|plot),data=datas[datas$species2==&#39;needle&#39;,])
+unimod.broad=lmer(Asat~trt+(1|site)+(1|block)+(1|plot),data=datas[datas$species2==&#39;broad&#39;,])
+
+#so fit seperate model for needle/broadleaf species
+
+## specify priors: how?
+datass.needle=datass[datass$species2==&#39;needle&#39;,]
+prior.R=cov(na.omit(datass)[,c(10,11,12,13,14,15)])
+mod.asat=lmer(Asat~trt+(1|site)+(1|block)+(1|plot)+(1|day),data=datass.needle)
+mod.gs=lmer(gs~trt+(1|site)+(1|block)+(1|plot)+(1|day),data=na.omit(datass.needle))
+mod.vwc=lmer(vwc~trt+(1|site)+(1|block)+(1|plot)+(1|day),data=na.omit(datass.needle))
+mod.tleaf=lmer(tleaf~trt+(1|site)+(1|block)+(1|plot)+(1|day),data=datass.needle)
+mod.VPG=lmer(VPG~trt+(1|site)+(1|block)+(1|plot)+(1|day),data=datass.needle)
+mod.ci=lmer(ci~trt+(1|site)+(1|block)+(1|plot)+(1|day),data=na.omit(datass.needle))
+
+mod.asat.vran=data.frame(VarCorr(mod.asat))[,4]
+mod.gs.vran=data.frame(VarCorr(mod.gs))[,4]
+mod.vwc.vran=data.frame(VarCorr(mod.vwc))[,4]
+mod.tleaf.vran=data.frame(VarCorr(mod.tleaf))[,4]
+mod.VPG.vran=data.frame(VarCorr(mod.VPG))[,4]
+mod.ci.vran=data.frame(VarCorr(mod.ci))[,4]
+
+prior.vran=cbind(mod.asat.vran,mod.gs.vran,mod.vwc.vran,mod.tleaf.vran,mod.VPG.vran,mod.ci.vran)
+
+eps=1e-4
+
+V1=diag(prior.vran[1,]+eps)
+V2=diag(prior.vran[2,]+eps)
+V3=diag(prior.vran[3,]+eps)
+V4=diag(prior.vran[4,]+eps)
+
+prior.needle=list(R = list(V = prior.R,nu=1),
+           G=list(G1=list(V=V1,nu=3),
+                  G2=list(V=V2,nu=3),
+                  G3=list(V=V3,nu=3),
+                  G4=list(V=V4,nu=3)))
+
+mulmod.needle=MCMCglmm(cbind(Asat,gs,vwc,tleaf,VPG,ci)~trait*trt,
+                random=~idh(trait):site+idh(trait):block+
+                  idh(trait):plot+idh(trait):day,rcov=~us(trait):units,
+                prior = prior.needle,
+                family = c(&quot;gaussian&quot;,&quot;gaussian&quot;,&quot;gaussian&quot;,&quot;gaussian&quot;,&quot;gaussian&quot;,&quot;gaussian&quot;),
+                data=datass.needle,nitt=30000,burnin = 10000,thin = 10)
+
+
+
+mulmod.broad=MCMCglmm(cbind(Asat,gs,vwc,tleaf)~trait*trt,
+                random=~idh(trait):site+idh(trait):block+idh(trait):plot+idh(trait):day,rcov=~us(trait):units,
+                family = c(&quot;gaussian&quot;,&quot;gaussian&quot;,&quot;gaussian&quot;,&quot;gaussian&quot;),
+                data=datass[datass$species2==&#39;broad&#39;,],nitt=30000,burnin = 10000,thin = 10)</code></pre>
 <p>prior of covariance matrix:</p>
 <p>Inverse-Wishart becomes more informative when: degrees of freedom increase, values in the scale matrix become smaller</p>
 </div>
 <div id="session-information" class="section level2">
 <h2>Session information</h2>
+<pre class="r"><code>sessionInfo()</code></pre>
 </div>
 
 <!-- Adjust MathJax settings so that all math formulae are shown using
