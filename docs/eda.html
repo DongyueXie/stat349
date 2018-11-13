@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+
+
+<meta name="author" content="Dongyue Xie" />
+
+<meta name="date" content="2018-10-22" />
+
+<title>Climate warming on photosynthesis</title>
+
+<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/cosmo.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-9.12.0/textmate.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+<link href="site_libs/font-awesome-5.0.13/css/fa-svg-with-js.css" rel="stylesheet" />
+<script src="site_libs/font-awesome-5.0.13/js/fontawesome-all.min.js"></script>
+<script src="site_libs/font-awesome-5.0.13/js/fa-v4-shims.min.js"></script>
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
+
+
+</head>
+
+<body>
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+  height: auto;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+</style>
+
+
+<style type="text/css">
+/* padding for bootstrap navbar */
+body {
+  padding-top: 51px;
+  padding-bottom: 40px;
+}
+/* offset scroll position for anchor links (for fixed navbar)  */
+.section h1 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+
+.section h2 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h3 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h4 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h5 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h6 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+</style>
+
+<script>
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.parent().addClass('active');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+});
+</script>
+
+
+<div class="container-fluid main-container">
+
+<!-- tabsets -->
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+</script>
+
+<!-- code folding -->
+
+
+
+
+<script>
+$(document).ready(function ()  {
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+  padding-left: 25px;
+  text-indent: 0;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row-fluid">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">stat349</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">Home</a>
+</li>
+<li>
+  <a href="about.html">About</a>
+</li>
+<li>
+  <a href="license.html">License</a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+  <a href="https://github.com/jdblischak/workflowr">
+    <span class="fa fa-github"></span>
+     
+  </a>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<!-- Add a small amount of space between sections. -->
+<style type="text/css">
+div.section {
+  padding-top: 12px;
+}
+</style>
+
+<div class="fluid-row" id="header">
+
+
+
+<h1 class="title toc-ignore">Climate warming on photosynthesis</h1>
+<h4 class="author"><em>Dongyue Xie</em></h4>
+<h4 class="date"><em>2018-10-22</em></h4>
+
+</div>
+
+
+<p><strong>Last updated:</strong> 2018-11-12</p>
+<strong>workflowr checks:</strong> <small>(Click a bullet for more information)</small>
+<ul>
+<li>
+<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>R Markdown file:</strong> up-to-date </summary></p>
+<p>Great! Since the R Markdown file has been committed to the Git repository, you know the exact version of the code that produced these results.</p>
+</details>
+</li>
+<li>
+<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>Environment:</strong> empty </summary></p>
+<p>Great job! The global environment was empty. Objects defined in the global environment can affect the analysis in your R Markdown file in unknown ways. For reproduciblity it’s best to always run the code in an empty environment.</p>
+</details>
+</li>
+<li>
+<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>Seed:</strong> <code>set.seed(20181017)</code> </summary></p>
+<p>The command <code>set.seed(20181017)</code> was run prior to running the code in the R Markdown file. Setting a seed ensures that any results that rely on randomness, e.g. subsampling or permutations, are reproducible.</p>
+</details>
+</li>
+<li>
+<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>Session information:</strong> recorded </summary></p>
+<p>Great job! Recording the operating system, R version, and package versions is critical for reproducibility.</p>
+</details>
+</li>
+<li>
+<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>Repository version:</strong> ade297b </summary></p>
+Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility. The version displayed above was the version of the Git repository at the time these results were generated. <br><br> Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
+<pre><code>
+Ignored files:
+    Ignored:    .Rhistory
+    Ignored:    .Rproj.user/
+    Ignored:    docs/figure/
+
+Untracked files:
+    Untracked:  analysis/experiment.Rmd
+
+</code></pre>
+Note that any generated files, e.g. HTML, png, CSS, etc., are not included in this status report because it is ok for generated content to have uncommitted changes. </details>
+</li>
+</ul>
+<details> <summary> <small><strong>Expand here to see past versions:</strong></small> </summary>
+<ul>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+File
+</th>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+<th style="text-align:left;">
+Message
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+Rmd
+</td>
+<td style="text-align:left;">
+ade297b
+</td>
+<td style="text-align:left;">
+Dongyue Xie
+</td>
+<td style="text-align:left;">
+2018-11-12
+</td>
+<td style="text-align:left;">
+wflow_publish(c(“analysis/index.Rmd”, “analysis/model.Rmd”,
+</td>
+</tr>
+</tbody>
+</table>
+</ul>
+<p></details></p>
+<hr />
+<div id="questions-to-be-answered" class="section level2">
+<h2>Questions to be answered</h2>
+<p>Three fundamental processess of plants: photosynthesis, respiration and transpiration.</p>
+<p>Climate warming will influence photosynthesis via thermal effects and by altering soil moisture.</p>
+<p>Conclusions from the study: an increase of 3.4°C in temperature increased light-saturated net photosynthesis and leaf diffusive conductance on average on the one-third of days with the wettest soils. In all 11 species, leaf diffusive conductance and, as a result, light-saturated net photosynthesis decreased during dry spells, and did so more sharply in warmed plants than in plants at ambient temperatures. Consequently, across the 11 species, warming reduced light-saturated net photosynthesis on the two-thirds of days with driest soils.</p>
+<p>Questions of study: plants will therefore probably experience both positive and negative effects of climate warming on photosynthesis within and across years—we propose that these will be positive when soil moisture is ample but negative when soils are drier.</p>
+<p>Net photosynthesis: The difference between the total amount of photosynthesis and the sum of the rates of respiration.</p>
+<p>leaf diffusive conductance: the measure of the rate of passage of carbon dioxide (CO2) entering, or water vapor exiting through the stomata of a leaf. It is a measure of the degree of stomatal opening and can be used as an indicator of plant water status.</p>
+</div>
+<div id="data-summary" class="section level2">
+<h2>Data summary</h2>
+<p>Total 2052 measurements, made on 1338 individuals, on 54 dates. Measurements made on morning or early afternoon; 5 speicies measured all three years, 4 in two years and 2 in one year.</p>
+<p>Structure of the units: Experimental units are trees and observational units are leaves. Site+block+plot</p>
+<p>Covariate: treatment-two levels, speicies-11, phylo-2 levels,</p>
+<p>Species:</p>
+<p>6 native broadleaves: maple(acerru,acersa), birch(betupap), oak(quermac, querrub), aspen(poputre).</p>
+<p>1 naturalized broadleaf: Buckthorn(rhamcat)</p>
+<p>4 native needle leaves: fir(abiebal), spruce(picegla), pine(pinuban,pinustr).</p>
+<p>Response: Asat, gs, VMC, ci(co2 cincentration), tleaf, VPG</p>
+<p>plots: different block/site/plots, species, different treatments, vmc, age effect? independent?</p>
+<ol style="list-style-type: decimal">
+<li>different species</li>
+<li>why blocks, sites and plots are random effects</li>
+</ol>
+<p>Some points:</p>
+<ol style="list-style-type: decimal">
+<li>Generally, measurements on different site were on different dates.</li>
+<li>On measurement day, first choose which speicies(2-7 kinds of species) to measure, then for each speicies, measure one tree from each plot.</li>
+</ol>
+<pre class="r"><code>datax=read.csv(&#39;/Users/dongyue/Documents/phd y1t1/data analysis/archive_edi/Reich2018NaturePaperDataAug2018.csv&#39;)
+#remove some extra data points included by errors
+#580: l1(2), might not be accrate
+#25,26: from d1, not used in this experiments.
+datax=datax[-c(25,26,580),]
+colnames(datax)[3]=&#39;trt&#39;
+colnames(datax)[4]=&#39;plot&#39;
+colnames(datax)[13]=&#39;vwc&#39;
+
+datax$plot=factor(datax$plot)
+dataxx=na.omit(datax)
+xtabs(~ site + block, dataxx)
+xtabs(~ block+plot,dataxx)
+xtabs(~ site+plot,dataxx)</code></pre>
+<pre class="r"><code># treatment vs vmc
+boxplot(vwc~trt,data=datax[datax$site==&#39;cfc&#39;,],main=&#39;box-plot: VWC - treatment, cfc&#39;,ylab=&#39;VWC&#39;)
+boxplot(vwc~trt,data=datax[datax$site==&#39;hwrc&#39;,],main=&#39;box-plot: VWC - treatment, hwrc&#39;,ylab=&#39;VWC&#39;)</code></pre>
+<p>For both sites, warmed soil has less water content. Assume the plots were randomly distributed to ambient and warmed treatment, then warming effect reduced water content in the soil.</p>
+<pre class="r"><code># treatment vs asat
+boxplot(Asat~trt,data=datax,main=&#39;box-plot: Asat - treatment&#39;,ylab=&#39;Asat&#39;)
+boxplot(Asat~trt,data=datax[datax$site==&#39;hwrc&#39;,],main=&#39;box-plot: Asat - treatment, hwrc&#39;,ylab=&#39;Asat&#39;)
+boxplot(Asat~trt,data=datax[datax$site==&#39;cfc&#39;,],main=&#39;box-plot: Asat - treatment, cfc&#39;,ylab=&#39;Asat&#39;)</code></pre>
+<p>If looking all the data, warming seem to have no effect on phototsynthesis. But if we look at different sites, higher temp results in more active photosynthesis at cfc while this the opposite at hwrc.</p>
+<p>Why? cfc is 150km north to hwrc. cfc has 783 mm mean annual precopotation while hwrc has 726 mm.</p>
+<pre class="r"><code># pairs
+pairs(datax[,c(10,11,12,13,14,15)],pch=&#39;.&#39;)
+round(cor(dataxx[,c(10,11,12,13,14,15)]),2)
+# 11 species: asat vs treatment
+species=levels(datax$species)
+par(mfrow=c(4,6))
+for (sp in species) {
+  dat=datax[datax$species==sp,]
+  boxplot(Asat~trt,data=dat[dat$site==&#39;cfc&#39;,],main=paste(sp,&#39;, cfc&#39;))
+  boxplot(Asat~trt,data=dat[dat$site==&#39;hwrc&#39;,],main=paste(sp,&#39;, hwrc&#39;))
+}</code></pre>
+<p>Interesting obs: needle leaved species reduced photosynthesis with higher temp while broad leaves increased.</p>
+<pre class="r"><code>boxplot(Asat~trt,data=datax[datax$species==&#39;betpa&#39;&amp;datax$site==&#39;cfc&#39;,],main=&#39;betpa,cfc&#39;,ylab=&#39;photosynthesis&#39;)
+boxplot(Asat~trt,data=datax[datax$species==&#39;betpa&#39;&amp;datax$site==&#39;hwrc&#39;,],main=&#39;betpa,hwrc&#39;,ylab=&#39;photosynthesis&#39;)</code></pre>
+<p>For each speicies, plot Asat vs VMC, and label the treatment. And plot the fitted linear line.</p>
+<pre class="r"><code>par(mfrow=c(4,3))
+for (sp in species) {
+  dat=datax[datax$species==sp,]
+  amb=lm(Asat~vwc,data=dat[dat$trt==&#39;ambient&#39;,])
+  
+  warm=lm(Asat~vwc,data=dat[dat$trt==&#39;warmed&#39;,])
+  plot(Asat~vwc,data=dat,main=sp,ylab=&#39;Photosynthesis&#39;,
+       col=ifelse(dat$trt==&#39;ambient&#39;,4,2))
+  xx=seq(0.05,0.27,length.out = 100)
+  lines(amb$model$vwc,amb$fitted.values,col=4,lwd=2)
+  lines(warm$model$vwc,warm$fitted.values,col=2,lwd=2)
+}</code></pre>
+<p>Any nonlinear relationship?</p>
+<pre class="r"><code>par(mfrow=c(4,3))
+for (sp in species) {
+  dat=datax[datax$species==sp,]
+  amb=loess(Asat~vwc,data=dat[dat$trt==&#39;ambient&#39;,])
+  
+  warm=loess(Asat~vwc,data=dat[dat$trt==&#39;warmed&#39;,])
+  plot(Asat~vwc,data=dat,main=sp,ylab=&#39;Photosynthesis&#39;,
+       col=ifelse(dat$trt==&#39;ambient&#39;,4,2))
+  xx=seq(0.05,0.27,length.out = 100)
+  lines(xx,predict(amb,xx),col=4,lwd=2)
+  lines(xx,predict(warm,xx),col=2,lwd=2)
+}</code></pre>
+<p>Model: y=species+treatment+VMC+VPG+T.leaf+INTERACTIONS+R.plot+R.block+R.site</p>
+<pre class="r"><code>#standardize &#39;Asat&#39;,&#39;gs&#39;,&#39;ci&#39;,&#39;vwc&#39;,&#39;tleaf&#39;,&#39;VPG&#39;
+datas &lt;- dataxx %&gt;% mutate_if(colnames(dataxx)%in%c(&#39;Asat&#39;,&#39;gs&#39;,&#39;ci&#39;,&#39;vwc&#39;,&#39;tleaf&#39;,&#39;VPG&#39;),scale)
+
+mod1=lmer(Asat~trt*species++(1|site)+(1|block)+(1|plot),data=datas)
+mod5=lmer(Asat~trt*species*vwc*VPG*tleaf+(1|site)+(1|block)+(1|plot),data=datas)
+mod4=lmer(Asat~(trt+species+vwc+VPG+tleaf)^4+(1|site)+(1|block)+(1|plot),data=datas)
+mod3=lmer(Asat~(trt+species+vwc+VPG+tleaf)^3+(1|site)+(1|block)+(1|plot),data=datas)
+mod2=lmerTest::lmer(Asat~(trt+species+vwc+VPG+tleaf)^2+(1|site)+(1|block)+(1|plot),data=datas)</code></pre>
+</div>
+<div id="session-information" class="section level2">
+<h2>Session information</h2>
+<pre class="r"><code>sessionInfo()</code></pre>
+</div>
+
+<!-- Adjust MathJax settings so that all math formulae are shown using
+TeX fonts only; see
+http://docs.mathjax.org/en/latest/configuration.html.  This will make
+the presentation more consistent at the cost of the webpage sometimes
+taking slightly longer to load. Note that this only works because the
+footer is added to webpages before the MathJax javascript. -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    "HTML-CSS": { availableFonts: ["TeX"] }
+  });
+</script>
+
+<hr>
+<p>
+  This reproducible <a href="http://rmarkdown.rstudio.com">R Markdown</a>
+  analysis was created with
+  <a href="https://github.com/jdblischak/workflowr">workflowr</a> 1.1.1
+</p>
+<hr>
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

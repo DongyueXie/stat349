@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+
+
+<meta name="author" content="Dongyue Xie" />
+
+<meta name="date" content="2018-11-12" />
+
+<title>model</title>
+
+<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/cosmo.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-9.12.0/textmate.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+<link href="site_libs/font-awesome-5.0.13/css/fa-svg-with-js.css" rel="stylesheet" />
+<script src="site_libs/font-awesome-5.0.13/js/fontawesome-all.min.js"></script>
+<script src="site_libs/font-awesome-5.0.13/js/fa-v4-shims.min.js"></script>
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
+
+
+</head>
+
+<body>
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+  height: auto;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+</style>
+
+
+<style type="text/css">
+/* padding for bootstrap navbar */
+body {
+  padding-top: 51px;
+  padding-bottom: 40px;
+}
+/* offset scroll position for anchor links (for fixed navbar)  */
+.section h1 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+
+.section h2 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h3 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h4 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h5 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h6 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+</style>
+
+<script>
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.parent().addClass('active');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+});
+</script>
+
+
+<div class="container-fluid main-container">
+
+<!-- tabsets -->
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+</script>
+
+<!-- code folding -->
+
+
+
+
+<script>
+$(document).ready(function ()  {
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+  padding-left: 25px;
+  text-indent: 0;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row-fluid">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">stat349</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">Home</a>
+</li>
+<li>
+  <a href="about.html">About</a>
+</li>
+<li>
+  <a href="license.html">License</a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+  <a href="https://github.com/jdblischak/workflowr">
+    <span class="fa fa-github"></span>
+     
+  </a>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<!-- Add a small amount of space between sections. -->
+<style type="text/css">
+div.section {
+  padding-top: 12px;
+}
+</style>
+
+<div class="fluid-row" id="header">
+
+
+
+<h1 class="title toc-ignore">model</h1>
+<h4 class="author"><em>Dongyue Xie</em></h4>
+<h4 class="date"><em>2018-11-12</em></h4>
+
+</div>
+
+
+<p><strong>Last updated:</strong> 2018-11-12</p>
+<strong>workflowr checks:</strong> <small>(Click a bullet for more information)</small>
+<ul>
+<li>
+<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>R Markdown file:</strong> up-to-date </summary></p>
+<p>Great! Since the R Markdown file has been committed to the Git repository, you know the exact version of the code that produced these results.</p>
+</details>
+</li>
+<li>
+<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>Environment:</strong> empty </summary></p>
+<p>Great job! The global environment was empty. Objects defined in the global environment can affect the analysis in your R Markdown file in unknown ways. For reproduciblity it’s best to always run the code in an empty environment.</p>
+</details>
+</li>
+<li>
+<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>Seed:</strong> <code>set.seed(20181017)</code> </summary></p>
+<p>The command <code>set.seed(20181017)</code> was run prior to running the code in the R Markdown file. Setting a seed ensures that any results that rely on randomness, e.g. subsampling or permutations, are reproducible.</p>
+</details>
+</li>
+<li>
+<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>Session information:</strong> recorded </summary></p>
+<p>Great job! Recording the operating system, R version, and package versions is critical for reproducibility.</p>
+</details>
+</li>
+<li>
+<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>Repository version:</strong> ade297b </summary></p>
+Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility. The version displayed above was the version of the Git repository at the time these results were generated. <br><br> Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
+<pre><code>
+Ignored files:
+    Ignored:    .Rhistory
+    Ignored:    .Rproj.user/
+
+Untracked files:
+    Untracked:  analysis/experiment.Rmd
+    Untracked:  docs/figure/
+
+</code></pre>
+Note that any generated files, e.g. HTML, png, CSS, etc., are not included in this status report because it is ok for generated content to have uncommitted changes. </details>
+</li>
+</ul>
+<hr />
+<div id="design" class="section level2">
+<h2>Design</h2>
+<ul>
+<li>2 sites: Cloquet Forestry Center(cfc, <span class="math inline">\(4.8^oC(40.6^o F)\)</span> mean annual temperature, 783mm mean annual precipitation) and Hubachek Wildness Research Center(hwrc, <span class="math inline">\(2.6^oC(36.7^oF)\)</span>, 726mm)</li>
+<li>3 blocks each site, 4 plots each block: 3 meter diameter circle plot.</li>
+<li>2 levels of treatment: open-air&amp;soil warming(<span class="math inline">\(+3.4^oC (38.1^oF)\)</span>) and ambient; each plot has 2 reps of each level of treatment.</li>
+<li>11 species: each plot has 11 juveniles of each 11 species, total 121 trees. – 6 native + 1 naturalized broadleaf: 2 maples, 1 birch, 1 oak, 1 aspen, 1 Buckthorn – 4 native needle leaved species: 2 pines, 1 spruce, 1 fir</li>
+</ul>
+</div>
+<div id="design-1" class="section level2">
+<h2>Design</h2>
+<p>Treatment</p>
+<ul>
+<li>Warming accomplished with infrared lamp heaters and soil cables(<strong>dummy</strong> lamps and cables in the ambient plots)</li>
+<li>Warming implemented during growing seasons(spring-fall), 24h.</li>
+</ul>
+<div class="figure">
+<img src="tree.jpg" alt="(a) Cables 10cm underground; (b) Warmed plot, 2010." />
+<p class="caption">(a) Cables 10cm underground; (b) Warmed plot, 2010.</p>
+</div>
+</div>
+<div id="covariates-measurements" class="section level2">
+<h2>Covariates, measurements</h2>
+<p>Covariates: treatment: 2 levels ; species: 11</p>
+<p>Measurements: Measurements made throughout growing seasons, in morning or early afternoon. Trees chosen randomly from those not previously sampled. Every measurement made on unique leaf.</p>
+<ul>
+<li>Asat: light-saturated net photosynthesis, unit: micromoles per <span class="math inline">\(m^2\)</span> per Second.</li>
+<li>gs: leaf diffusive conductance, a measure of degree of stomatal opening - vapor and CO2 diffusion; unit: moles per <span class="math inline">\(m^2\)</span> per Second.</li>
+<li>vwc: Volumetric water content from 0-20cm depth, <strong>one measurement per plot</strong>.</li>
+<li>ci: leaf internal CO2 concentration during Asat measurement</li>
+<li>tleaf: leaf temperature during Asat measurement</li>
+<li>VPG: Vapor pressure gradient from leaf to air(vapor pressure in leaf/ in air)</li>
+</ul>
+</div>
+<div id="data-summary" class="section level2">
+<h2>Data summary</h2>
+<ul>
+<li><p>2050 measurements made on 1336 individuals on 54 dates. 167 rows have missing data.</p></li>
+<li><p>Summary of blocks and treatment</p></li>
+</ul>
+</div>
+<div id="block-structures" class="section level2">
+<h2>Block structures</h2>
+<p>site by block:</p>
+<p>site by plot:</p>
+</div>
+<div id="block-structures-1" class="section level2">
+<h2>Block structures</h2>
+<p>block by plot:</p>
+</div>
+<div id="measurements" class="section level2">
+<h2>Measurements</h2>
+<ul>
+<li>summary of measurements</li>
+</ul>
+</div>
+<div id="measurements-1" class="section level2">
+<h2>Measurements</h2>
+</div>
+<div id="measurements-2" class="section level2">
+<h2>Measurements</h2>
+<ul>
+<li>summary of measurements</li>
+</ul>
+</div>
+<div id="treatment-vs-asat" class="section level2">
+<h2>Treatment vs Asat</h2>
+</div>
+<div id="treatment-vs-leaf-diffusive-conductance" class="section level2">
+<h2>Treatment vs leaf diffusive conductance</h2>
+</div>
+<div id="treatment-vs-vwc" class="section level2">
+<h2>Treatment vs VWC</h2>
+</div>
+<div id="pairs-plot" class="section level2">
+<h2>Pairs plot</h2>
+</div>
+<div id="speicies-specific-plots" class="section level2">
+<h2>Speicies specific plots</h2>
+<p>broadleaves: maple(aceru,acesa), birch(betpa), oak(quema, queru), aspen(poptr), Buckthorn(rhaca)</p>
+<p>needle leaves: fir(abiba), spruce(picgl), pine(pinba,pinst).</p>
+</div>
+<div id="photosynthesis-vwc" class="section level2">
+<h2>Photosynthesis ~ VWC</h2>
+</div>
+<div id="leaf-diffusive-conductance-vwc" class="section level2">
+<h2>Leaf diffusive conductance ~ VWC</h2>
+</div>
+<div id="modelling" class="section level2">
+<h2>Modelling</h2>
+<p>Response: photosynthesis; fixed effect: treatment, species, VWC, Tleaf, VPG; random effects: site, block, plot.</p>
+<p>Compare 5-way interaction and 4 way interaction model, <code>anova(mod4, full.mod)</code>:</p>
+</div>
+<div id="modelling-1" class="section level2">
+<h2>Modelling</h2>
+<p>Compare 4-way interaction and 3-way interaction model:</p>
+<p>So probably a 3-way interaction model could explain the data well.</p>
+</div>
+<div id="modelling---significant-effects-and-interactions" class="section level2">
+<h2>Modelling - Significant effects and interactions?</h2>
+<p>Use <code>drop1</code> function in R which performs Chisq test on single term deletion:</p>
+</div>
+<div id="modelling---significant-effects-and-interactions-1" class="section level2">
+<h2>Modelling - Significant effects and interactions?</h2>
+<p>3-way interaction model</p>
+</div>
+<div id="modelling---significant-effects-and-interactions-2" class="section level2">
+<h2>Modelling - Significant effects and interactions?</h2>
+<p>2-way interaction model</p>
+</div>
+<div id="random-effects" class="section level2">
+<h2>Random effects</h2>
+<p>Is variance parameter of plot equals to 0? LR test gives p-value:</p>
+</div>
+<div id="random-slope" class="section level2">
+<h2>Random slope?</h2>
+</div>
+<div id="to-do" class="section level2">
+<h2>To do …</h2>
+<p>Questions and future work.</p>
+</div>
+<div id="after-presentation" class="section level2">
+<h2>After presentation</h2>
+<p>Multivariate model?</p>
+<p><span class="math inline">\(Y=XB+ZU+E\)</span></p>
+<p><span class="math inline">\(Y\in R^{N\times m}\)</span>, <span class="math inline">\(Z\in R^{N\times q}\)</span>, <span class="math inline">\(U\in R^{N\times m}\)</span> and <span class="math inline">\(E\in R^{N\times m}\)</span>.</p>
+<p>For now, only consider random intercepts, then <span class="math inline">\(U_{\cdot j}\sim_{iid} N(0,\Sigma_r)\)</span> where <span class="math inline">\(\Sigma_r=(V_1\otimes I_1)\oplus (V_2\otimes I_2)\oplus ... \oplus (V_b\otimes I_b)\)</span>, <span class="math inline">\(b\)</span> is the number of random effects(sites, blocks,…); If only consider interceots, each <span class="math inline">\(V\)</span> here is an univairate variance, the dimension of corresponding <span class="math inline">\(I\)</span> is the number of levels in that random effect(say if there are 3 sites then <span class="math inline">\(I=diag(1,1,1)\)</span>). Note: for simplicity we assume the random effects are independent aross different reponses(this is why we put iid above). For random error: <span class="math inline">\(E_{i\cdot}\sim_{iid} N(0,\Sigma_{err})\)</span> where <span class="math inline">\(\Sigma_{err})\in R^{m\times m}\)</span> for <span class="math inline">\(i= 1,...,N\)</span>.</p>
+<p>This is model is not easy to fit. One possible way to fix this is to transform the data into univariate response by adding indicators for response.</p>
+<p><span class="math inline">\(y=X\beta+Zu+\epsilon\)</span> where <span class="math inline">\(y\in R^{Nm}\)</span>, <span class="math inline">\(\beta\in R^{p+1}\)</span> where the extra 1 is for response indicator.</p>
+<p>prior of covariance matrix:</p>
+<p>Inverse-Wishart becomes more informative when: degrees of freedom increase, values in the scale matrix become smaller</p>
+</div>
+<div id="session-information" class="section level2">
+<h2>Session information</h2>
+</div>
+
+<!-- Adjust MathJax settings so that all math formulae are shown using
+TeX fonts only; see
+http://docs.mathjax.org/en/latest/configuration.html.  This will make
+the presentation more consistent at the cost of the webpage sometimes
+taking slightly longer to load. Note that this only works because the
+footer is added to webpages before the MathJax javascript. -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    "HTML-CSS": { availableFonts: ["TeX"] }
+  });
+</script>
+
+<hr>
+<p>
+  This reproducible <a href="http://rmarkdown.rstudio.com">R Markdown</a>
+  analysis was created with
+  <a href="https://github.com/jdblischak/workflowr">workflowr</a> 1.1.1
+</p>
+<hr>
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
