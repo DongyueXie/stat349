@@ -6,4 +6,8 @@ output:
     toc: false
 ---
 
-Welcome to my research website.
+Course project studies B4WarmED experiment data.
+
+1. [Experimental design overview](experiment.html)
+2. [Explanatory data analysis](eda.html)
+3. [Modelling](model.html)

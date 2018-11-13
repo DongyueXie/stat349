@@ -1,0 +1,168 @@
+---
+title: "Climate warming on photosynthesis"
+author: "Dongyue Xie"
+date: "2018-10-22"
+output: workflowr::wflow_html
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE,eval = F)
+```
+
+## Questions to be answered
+
+Three fundamental processess of plants: photosynthesis, respiration and transpiration.
+
+Climate warming will influence photosynthesis via thermal effects and by altering soil moisture.
+
+Conclusions from the study: an increase of 3.4°C in temperature increased light-saturated net photosynthesis and leaf diffusive conductance on average on the one-third of days with the wettest soils. In all 11 species, leaf diffusive conductance and, as a result, light-saturated net photosynthesis decreased during dry spells, and did so more sharply in warmed plants than in plants at ambient temperatures. Consequently, across the 11 species, warming reduced light-saturated net photosynthesis on the two-thirds of days with driest soils.
+
+Questions of study: plants will therefore probably experience both positive and negative effects of climate warming on photosynthesis within and across years—we propose that these will be positive when soil moisture is ample but negative when soils are drier.
+
+Net photosynthesis: The difference between the total amount of photosynthesis and the sum of the rates of respiration.
+
+leaf diffusive conductance:  the measure of the rate of passage of carbon dioxide (CO2) entering, or water vapor exiting through the stomata of a leaf. It is a measure of the degree of stomatal opening and can be used as an indicator of plant water status. 
+
+## Data summary
+
+Total 2052 measurements, made on 1338 individuals, on 54 dates. Measurements made on morning or early afternoon; 5 speicies measured all three years, 4 in two years and 2 in one year. 
+
+Structure of the units: Experimental units are trees and observational units are leaves. Site+block+plot
+
+Covariate: treatment-two levels, speicies-11, phylo-2 levels, 
+
+Species: 
+
+6 native broadleaves: maple(acerru,acersa), birch(betupap), oak(quermac, querrub), aspen(poputre).
+
+1 naturalized broadleaf: Buckthorn(rhamcat)
+
+4 native needle leaves: fir(abiebal), spruce(picegla), pine(pinuban,pinustr). 
+
+
+Response: Asat, gs, VMC, ci(co2 cincentration), tleaf, VPG
+
+
+plots: different block/site/plots, species, different treatments, vmc, age effect? independent?
+
+1. different species
+1. why blocks, sites and plots are random effects
+
+Some points: 
+
+1. Generally, measurements on different site were on different dates. 
+2. On measurement day, first choose which speicies(2-7 kinds of species) to measure, then for each speicies, measure one tree from each plot.
+
+
+
+```{r}
+datax=read.csv('/Users/dongyue/Documents/phd y1t1/data analysis/archive_edi/Reich2018NaturePaperDataAug2018.csv')
+#remove some extra data points included by errors
+#580: l1(2), might not be accrate
+#25,26: from d1, not used in this experiments.
+datax=datax[-c(25,26,580),]
+colnames(datax)[3]='trt'
+colnames(datax)[4]='plot'
+colnames(datax)[13]='vwc'
+
+datax$plot=factor(datax$plot)
+dataxx=na.omit(datax)
+xtabs(~ site + block, dataxx)
+xtabs(~ block+plot,dataxx)
+xtabs(~ site+plot,dataxx)
+```
+
+```{r}
+
+# treatment vs vmc
+boxplot(vwc~trt,data=datax[datax$site=='cfc',],main='box-plot: VWC - treatment, cfc',ylab='VWC')
+boxplot(vwc~trt,data=datax[datax$site=='hwrc',],main='box-plot: VWC - treatment, hwrc',ylab='VWC')
+```
+
+For both sites, warmed soil has less water content. Assume the plots were randomly distributed to ambient and warmed treatment, then warming effect reduced water content in the soil.
+
+
+```{r}
+# treatment vs asat
+boxplot(Asat~trt,data=datax,main='box-plot: Asat - treatment',ylab='Asat')
+boxplot(Asat~trt,data=datax[datax$site=='hwrc',],main='box-plot: Asat - treatment, hwrc',ylab='Asat')
+boxplot(Asat~trt,data=datax[datax$site=='cfc',],main='box-plot: Asat - treatment, cfc',ylab='Asat')
+```
+
+If looking all the data, warming seem to have no effect on phototsynthesis. But if we look at different sites, higher temp results in more active photosynthesis at cfc while this the opposite at hwrc. 
+
+Why? cfc is 150km north to hwrc. cfc has 783 mm mean annual precopotation while hwrc has 726 mm.
+
+```{r}
+# pairs
+pairs(datax[,c(10,11,12,13,14,15)],pch='.')
+round(cor(dataxx[,c(10,11,12,13,14,15)]),2)
+# 11 species: asat vs treatment
+species=levels(datax$species)
+par(mfrow=c(4,6))
+for (sp in species) {
+  dat=datax[datax$species==sp,]
+  boxplot(Asat~trt,data=dat[dat$site=='cfc',],main=paste(sp,', cfc'))
+  boxplot(Asat~trt,data=dat[dat$site=='hwrc',],main=paste(sp,', hwrc'))
+}
+```
+
+Interesting obs: needle leaved species reduced photosynthesis with higher temp while broad leaves increased.
+
+```{r}
+boxplot(Asat~trt,data=datax[datax$species=='betpa'&datax$site=='cfc',],main='betpa,cfc',ylab='photosynthesis')
+boxplot(Asat~trt,data=datax[datax$species=='betpa'&datax$site=='hwrc',],main='betpa,hwrc',ylab='photosynthesis')
+```
+
+For each speicies, plot Asat vs VMC, and label the treatment. And plot the fitted linear line.
+
+```{r}
+par(mfrow=c(4,3))
+for (sp in species) {
+  dat=datax[datax$species==sp,]
+  amb=lm(Asat~vwc,data=dat[dat$trt=='ambient',])
+  
+  warm=lm(Asat~vwc,data=dat[dat$trt=='warmed',])
+  plot(Asat~vwc,data=dat,main=sp,ylab='Photosynthesis',
+       col=ifelse(dat$trt=='ambient',4,2))
+  xx=seq(0.05,0.27,length.out = 100)
+  lines(amb$model$vwc,amb$fitted.values,col=4,lwd=2)
+  lines(warm$model$vwc,warm$fitted.values,col=2,lwd=2)
+}
+
+```
+
+Any nonlinear relationship?
+
+```{r}
+par(mfrow=c(4,3))
+for (sp in species) {
+  dat=datax[datax$species==sp,]
+  amb=loess(Asat~vwc,data=dat[dat$trt=='ambient',])
+  
+  warm=loess(Asat~vwc,data=dat[dat$trt=='warmed',])
+  plot(Asat~vwc,data=dat,main=sp,ylab='Photosynthesis',
+       col=ifelse(dat$trt=='ambient',4,2))
+  xx=seq(0.05,0.27,length.out = 100)
+  lines(xx,predict(amb,xx),col=4,lwd=2)
+  lines(xx,predict(warm,xx),col=2,lwd=2)
+}
+
+
+```
+
+Model: y=species+treatment+VMC+VPG+T.leaf+INTERACTIONS+R.plot+R.block+R.site
+
+```{r}
+#standardize 'Asat','gs','ci','vwc','tleaf','VPG'
+datas <- dataxx %>% mutate_if(colnames(dataxx)%in%c('Asat','gs','ci','vwc','tleaf','VPG'),scale)
+
+mod1=lmer(Asat~trt*species++(1|site)+(1|block)+(1|plot),data=datas)
+mod5=lmer(Asat~trt*species*vwc*VPG*tleaf+(1|site)+(1|block)+(1|plot),data=datas)
+mod4=lmer(Asat~(trt+species+vwc+VPG+tleaf)^4+(1|site)+(1|block)+(1|plot),data=datas)
+mod3=lmer(Asat~(trt+species+vwc+VPG+tleaf)^3+(1|site)+(1|block)+(1|plot),data=datas)
+mod2=lmerTest::lmer(Asat~(trt+species+vwc+VPG+tleaf)^2+(1|site)+(1|block)+(1|plot),data=datas)
+```
+
+
