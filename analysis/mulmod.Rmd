@@ -1,0 +1,332 @@
+---
+title: "Multi-response linear mixed model for photosynthesis data"
+author: "Dongyue Xie"
+date: "2018-11-16"
+output: workflowr::wflow_html
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = T,message=FALSE,warning=FALSE,eval=FALSE)
+```
+
+```{r}
+library(MCMCglmm)
+library(lme4)
+datax=read.csv('/Users/dongyue/Documents/phd y1t1/data analysis/archive_edi/Reich2018NaturePaperDataAug2018.csv')
+datax=datax[-c(25,26,580),]
+colnames(datax)[3]='trt'
+colnames(datax)[4]='plot'
+colnames(datax)[13]='vwc'
+datax$plot=factor(datax$plot)
+
+datas=datax
+datas$ci=datas$ci/100
+#year:doy as factor
+datas$day=factor(datas$year):factor(datas$doy)
+#species two categories: fir(abiba), spruce(picgl), pine(pinba,pinst).
+needle=c('abiba','picgl','pinba','pinst')
+datas$species2=factor(ifelse(datas$species %in% needle,'needle','broad'))
+
+#scale data
+
+library(dplyr)
+datas = datas %>% mutate_if(colnames(datas)%in%c('Asat','gs','ci','vwc','tleaf','VPG'),function(x){return(scale(x))})
+
+##############
+
+datas.needle=datas[datas$species2=='needle',]
+prior.R=cov(na.omit(datas)[,c(10,11,12,13,14,15)])
+mod.asat=lmer(Asat~trt+(1|site)+(1|block)+(1|plot)+(1|day),data=datas.needle)
+mod.gs=lmer(gs~trt+(1|site)+(1|block)+(1|plot)+(1|day),data=na.omit(datas.needle))
+mod.vwc=lmer(vwc~trt+(1|site)+(1|block)+(1|plot)+(1|day),data=na.omit(datas.needle))
+mod.tleaf=lmer(tleaf~trt+(1|site)+(1|block)+(1|plot)+(1|day),data=datas.needle)
+mod.VPG=lmer(VPG~trt+(1|site)+(1|block)+(1|plot)+(1|day),data=datas.needle)
+mod.ci=lmer(ci~trt+(1|site)+(1|block)+(1|plot)+(1|day),data=na.omit(datas.needle))
+
+mod.asat.vran=data.frame(VarCorr(mod.asat))[,4]
+mod.gs.vran=data.frame(VarCorr(mod.gs))[,4]
+mod.vwc.vran=data.frame(VarCorr(mod.vwc))[,4]
+mod.tleaf.vran=data.frame(VarCorr(mod.tleaf))[,4]
+mod.VPG.vran=data.frame(VarCorr(mod.VPG))[,4]
+mod.ci.vran=data.frame(VarCorr(mod.ci))[,4]
+
+prior.vran=cbind(mod.asat.vran,mod.gs.vran,mod.vwc.vran,mod.tleaf.vran,mod.VPG.vran,mod.ci.vran)
+
+eps=1e-4
+
+V1=diag(prior.vran[1,]+eps)
+V2=diag(prior.vran[2,]+eps)
+V3=diag(prior.vran[3,]+eps)
+V4=diag(prior.vran[4,]+eps)
+
+prior.needle=list(R = list(V = prior.R,nu=1),
+           G=list(G1=list(V=V1,nu=4),
+                  G2=list(V=V2,nu=3),
+                  G3=list(V=V3,nu=2),
+                  G4=list(V=V4,nu=2)))
+
+prior.I=list(R = list(V = diag(6),nu=1),
+           G=list(G1=list(V=diag(6),nu=4),
+                  G2=list(V=diag(6),nu=3),
+                  G3=list(V=diag(6),nu=2),
+                  G4=list(V=diag(6),nu=2)))
+
+mulmod.needle=MCMCglmm(cbind(Asat,gs,vwc,tleaf,VPG,ci)~trait*trt,
+                random=~idh(trait):site+idh(trait):block+
+                  idh(trait):plot+idh(trait):day,rcov=~us(trait):units,
+                prior = prior.I,
+                family = c("gaussian","gaussian","gaussian","gaussian","gaussian","gaussian"),
+                data=datas.needle,nitt=10000,burnin = 3000,thin = 10)
+
+#13000 iteration is enough
+#strong prior(nu=5 for site) makes the random effects of sites mix better.
+
+# mulmod.needle2=MCMCglmm(cbind(Asat,gs,vwc,tleaf,VPG,ci)~trait*trt,
+#                 random=~idh(trait):site+idh(trait):block+
+#                   idh(trait):plot+idh(trait):day,rcov=~us(trait):units,
+#                 prior = prior.needle,
+#                 family = c("gaussian","gaussian","gaussian","gaussian","gaussian","gaussian"),
+#                 data=datas.needle,nitt=13000,burnin = 3000,thin = 10)
+
+
+#broad leaf
+
+datas.broad=datas[datas$species2=='broad',]
+prior.R=cov(na.omit(datas)[,c(10,11,12,13,14,15)])
+mod.asat=lmer(Asat~trt+(1|site)+(1|block)+(1|plot)+(1|day),data=datas.broad)
+mod.gs=lmer(gs~trt+(1|site)+(1|block)+(1|plot)+(1|day),data=na.omit(datas.broad))
+mod.vwc=lmer(vwc~trt+(1|site)+(1|block)+(1|plot)+(1|day),data=na.omit(datas.broad))
+mod.tleaf=lmer(tleaf~trt+(1|site)+(1|block)+(1|plot)+(1|day),data=datas.broad)
+mod.VPG=lmer(VPG~trt+(1|site)+(1|block)+(1|plot)+(1|day),data=datas.broad)
+mod.ci=lmer(ci~trt+(1|site)+(1|block)+(1|plot)+(1|day),data=na.omit(datas.broad))
+
+mod.asat.vran=data.frame(VarCorr(mod.asat))[,4]
+mod.gs.vran=data.frame(VarCorr(mod.gs))[,4]
+mod.vwc.vran=data.frame(VarCorr(mod.vwc))[,4]
+mod.tleaf.vran=data.frame(VarCorr(mod.tleaf))[,4]
+mod.VPG.vran=data.frame(VarCorr(mod.VPG))[,4]
+mod.ci.vran=data.frame(VarCorr(mod.ci))[,4]
+
+prior.vran=cbind(mod.asat.vran,mod.gs.vran,mod.vwc.vran,mod.tleaf.vran,mod.VPG.vran,mod.ci.vran)
+
+eps=1e-4
+
+V1=diag(prior.vran[1,]+eps)
+V2=diag(prior.vran[2,]+eps)
+V3=diag(prior.vran[3,]+eps)
+V4=diag(prior.vran[4,]+eps)
+
+prior.broad=list(R = list(V = prior.R,nu=1),
+           G=list(G1=list(V=V1,nu=2),
+                  G2=list(V=V2,nu=2),
+                  G3=list(V=V3,nu=2),
+                  G4=list(V=V4,nu=2)))
+
+mulmod.broad=MCMCglmm(cbind(Asat,gs,vwc,tleaf,VPG,ci)~trait*trt,
+                random=~idh(trait):site+idh(trait):block+
+                  idh(trait):plot+idh(trait):day,rcov=~us(trait):units,
+                prior = prior.broad,
+                family = c("gaussian","gaussian","gaussian","gaussian","gaussian","gaussian"),
+                data=datas.broad,nitt=13000,burnin = 3000,thin = 10)
+
+######################3
+#together+species2 as fixed effect
+
+prior.R=cov(na.omit(datas)[,c(10,11,12,13,14,15)])
+datas.p=na.omit(datas)
+mod.asat=lmer(Asat~trt*species2+(1|site)+(1|block)+(1|plot)+(1|day),data=datas.p)
+mod.gs=lmer(gs~trt*species2+(1|site)+(1|block)+(1|plot)+(1|day),data=(datas.p))
+mod.vwc=lmer(vwc~trt*species2+(1|site)+(1|block)+(1|plot)+(1|day),data=(datas.p))
+mod.tleaf=lmer(tleaf~trt*species2+(1|site)+(1|block)+(1|plot)+(1|day),data=datas.p)
+mod.VPG=lmer(VPG~trt*species2+(1|site)+(1|block)+(1|plot)+(1|day),data=datas.p)
+mod.ci=lmer(ci~trt*species2+(1|site)+(1|block)+(1|plot)+(1|day),data=(datas.p))
+
+mod.asat.vran=data.frame(VarCorr(mod.asat))[,4]
+mod.gs.vran=data.frame(VarCorr(mod.gs))[,4]
+mod.vwc.vran=data.frame(VarCorr(mod.vwc))[,4]
+mod.tleaf.vran=data.frame(VarCorr(mod.tleaf))[,4]
+mod.VPG.vran=data.frame(VarCorr(mod.VPG))[,4]
+mod.ci.vran=data.frame(VarCorr(mod.ci))[,4]
+
+prior.vran=cbind(mod.asat.vran,mod.gs.vran,mod.vwc.vran,mod.tleaf.vran,mod.VPG.vran,mod.ci.vran)
+
+eps=1e-3
+
+V1=diag(prior.vran[1,]+eps)
+V2=diag(prior.vran[2,]+eps)
+V3=diag(prior.vran[3,]+eps)
+V4=diag(prior.vran[4,]+eps)
+
+## seting nu to be 1,4,4,4,4 gives almost same results as setting them to be 6,6,6,6,6.
+
+prior.all=list(R = list(V = prior.R,nu=6),
+               G=list(G1=list(V=V1,nu=6,alpha.mu=rep(0,6),alpha.V=diag(6)*1e3),
+                  G2=list(V=V2,nu=6,alpha.mu=rep(0,6),alpha.V=diag(6)*1e3),
+                  G3=list(V=V3,nu=6,alpha.mu=rep(0,6),alpha.V=diag(6)*1e3),
+                  G4=list(V=V4,nu=6,alpha.mu=rep(0,6),alpha.V=diag(6)*1e3)))
+
+mulmod=MCMCglmm(cbind(Asat,gs,vwc,tleaf,VPG,ci)~trait*trt*species2,
+                random=~idh(trait):site+idh(trait):block+
+                  idh(trait):plot+idh(trait):day,rcov=~us(trait):units,
+                prior = prior.all,
+                family = c("gaussian","gaussian","gaussian","gaussian","gaussian","gaussian"),
+                data=datas,nitt=13000,burnin = 3000,thin = 10)
+library("qgraph")
+ss=summary(mulmod.needle)
+R=ss$Rcovariances[,1]
+R=matrix(R,6,6,byrow = T)
+colnames(R)=c('Asat','gs','vwc','tleaf','VPG','ci')
+rownames(R)=c('Asat','gs','vwc','tleaf','VPG','ci')
+
+qgraph(round(R,5),edge.labels=TRUE,graph="concentration")
+```
+
+
+univariate model linear 
+
+```{r}
+datas=datax
+datas$ci=datas$ci/100
+#year:doy as factor
+datas$day=factor(datas$year):factor(datas$doy)
+#species two categories: fir(abiba), spruce(picgl), pine(pinba,pinst).
+needle=c('abiba','picgl','pinba','pinst')
+datas$species2=factor(ifelse(datas$species %in% needle,'needle','broad'))
+
+#
+mod1=lmer(Asat~trt*species2*vwc+(1|site)+(1|block)+(1|plot)+(1|day),data=datas)
+```
+
+
+Two reponses at a time:
+
+```{r}
+prior2=list(R = list(V = diag(2),nu=1),
+               G=list(G1=list(V=diag(2),nu=1,alpha.mu=rep(0,2),alpha.V=diag(2)*1e3),
+                  G2=list(V=diag(2),nu=1,alpha.mu=rep(0,2),alpha.V=diag(2)*1e3),
+                  G3=list(V=diag(2),nu=1,alpha.mu=rep(0,2),alpha.V=diag(2)*1e3)
+                  ))
+mulmod.broad=MCMCglmm(cbind(Asat,vwc)~trait*trt,
+                      random=~us(trait):block+
+                          us(trait):plot+us(trait):day,rcov=~us(trait):units,
+                      prior = prior2,
+                      family = c("gaussian","gaussian"),
+                      data=na.omit(datas.broad),nitt=13000,burnin = 3000,thin = 10)
+```
+
+
+
+Is each day different site? plot? block?
+
+results: each day corresponds to different site; have some same blocks; have some same plots.
+
+```{r}
+idx=c()
+for (dd in unique(datas$day)) {
+  if(length(unique(datas[datas$day==dd,]$site))==1){
+    idx=c(idx,1)
+  }else{
+    idx=c(idx,0)
+  }
+}
+```
+
+$$ Y \sim N(X \beta, \tau_0 Z_0 + \tau_1 Z_1),$$ where $Z_0$ is a identity matrix and $Z_1$
+
+
+
+
+try mcglm package
+
+```{r}
+dat=na.omit(datas.broad)
+#number of observations
+N=dim(dat)[1]
+#number of days
+nd=length(unique((dat$day)))
+#number of block
+nb=length(unique((dat$block)))
+#numebr of plot
+np=length(unique((dat$plot)))
+#total number of random effect levels
+q=nd+nb+np
+library(mcglm)
+#random effect structure
+
+#response 1 day var sturcture
+v1d=Diagonal(2*q,c(rep(1,nd),rep(0,2*q-nd)))
+#response 1 block
+v1b=Diagonal(2*q,c(rep(0,nd),rep(1,nb),rep(0,2*q-nd-nb)))
+#response 1 plot
+v1p=Diagonal(2*q,c(rep(0,nd),rep(0,nb),rep(1,np),rep(0,q)))
+
+#response 2 day
+v2d=Diagonal(2*q,c(rep(0,q),rep(1,nd),rep(0,q-nd)))
+#response 2 block
+v2b=Diagonal(2*q,c(rep(0,q+nd),rep(1,nb),rep(0,np)))
+#response 2 plot
+v2p=Diagonal(2*q,c(rep(0,q+nd+nb),rep(1,np)))
+
+#cov of random effects
+#cov of day
+v11=Matrix(0,q,q);v22=Matrix(0,q,q)
+v12=Diagonal(q,c(rep(1,nd),rep(0,q-nd)))
+v21=v12
+covd=rbind2(cbind2(v11,v12),cbind2(v21,v22))
+
+#cov of block
+v11=Matrix(0,q,q);v22=Matrix(0,q,q)
+v12=Diagonal(q,c(rep(0,nd),rep(1,nb),rep(0,np)))
+v21=v12
+covb=rbind2(cbind2(v11,v12),cbind2(v21,v22))
+
+#cov of plot
+v11=Matrix(0,q,q);v22=Matrix(0,q,q)
+v12=Diagonal(q,c(rep(0,nd),rep(0,nb),rep(1,np)))
+v21=v12
+covp=rbind2(cbind2(v11,v12),cbind2(v21,v22))
+
+#######
+#cov structure of random error
+#var of response 1
+var1=Diagonal(2*N,c(rep(1,N),rep(0,N)))
+#var of response 2
+var2=Diagonal(2*N,c(rep(0,N),rep(1,N)))
+#cov of 1 & 2
+v11=Matrix(0,N,N);v22=v11
+v12=Diagonal(N,rep(1,N))
+v21=v12
+cov12=rbind2(cbind2(v11,v12),cbind2(v21,v22))
+
+##construct matrix Z...
+
+Z12=Matrix(0,N,q);Z21=Z12
+#get the random effect design matrix Z11
+ll=lmer((Asat)~(1|day)+(1|block)+(1|plot),data=dat)
+Z11=getME(ll,'Z')
+Z22=Z11
+Z=rbind2(cbind2(Z11,Z12),cbind2(Z21,Z22))
+
+########################
+
+#get all the cov structure of y!
+ran1d=Z%*%v1d%*%t(Z)
+ran1b=Z%*%v1b%*%t(Z)
+ran1p=Z%*%v1p%*%t(Z)
+
+ran2d=Z%*%v2d%*%t(Z)
+ran2b=Z%*%v2b%*%t(Z)
+ran2p=Z%*%v2p%*%t(Z)
+
+ran12d=Z%*%covd%*%t(Z)
+ran12b=Z%*%covb%*%t(Z)
+ran12p=Z%*%covp%*%t(Z)
+
+dat.mod=rbind(dat,dat)
+dat.mod$y=c(dat$Asat,dat$vwc)
+
+needle.mod=mcglm(linear_pred =c(y~trt),
+                matrix_pred = list(list(ran1d,ran1b,ran1p,ran2d,ran2b,ran2p,ran12d,ran12b,ran12p,var1,var2,cov12)),
+                data=dat.mod)
+
+```
