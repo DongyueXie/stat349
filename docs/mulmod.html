@@ -13,7 +13,7 @@
 
 <meta name="date" content="2018-11-16" />
 
-<title>Multi-response linear mixed model for photosynthesis data</title>
+<title>Effects of climating warming on photosynthesis</title>
 
 <script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -316,14 +316,14 @@ div.section {
 
 
 
-<h1 class="title toc-ignore">Multi-response linear mixed model for photosynthesis data</h1>
+<h1 class="title toc-ignore">Effects of climating warming on photosynthesis</h1>
 <h4 class="author"><em>Dongyue Xie</em></h4>
 <h4 class="date"><em>2018-11-16</em></h4>
 
 </div>
 
 
-<p><strong>Last updated:</strong> 2018-11-19</p>
+<p><strong>Last updated:</strong> 2018-11-25</p>
 <strong>workflowr checks:</strong> <small>(Click a bullet for more information)</small>
 <ul>
 <li>
@@ -347,16 +347,18 @@ div.section {
 </details>
 </li>
 <li>
-<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>Repository version:</strong> <a href="https://github.com/DongyueXie/stat349/tree/9d04158728ec3f1de1fdb5f5d1cacc1fb559df45" target="_blank">9d04158</a> </summary></p>
+<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>Repository version:</strong> <a href="https://github.com/DongyueXie/stat349/tree/13175cb783f72e82a6c6b8eaae89663e4463aee8" target="_blank">13175cb</a> </summary></p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility. The version displayed above was the version of the Git repository at the time these results were generated. <br><br> Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
 <pre><code>
 Ignored files:
+    Ignored:    .DS_Store
     Ignored:    .Rhistory
     Ignored:    .Rproj.user/
-    Ignored:    docs/figure/
 
 Untracked files:
     Untracked:  analysis/experiment.Rmd
+    Untracked:  analysis/mulmodpre3.Rmd
+    Untracked:  docs/figure/
 
 </code></pre>
 Note that any generated files, e.g. HTML, png, CSS, etc., are not included in this status report because it is ok for generated content to have uncommitted changes. </details>
@@ -390,6 +392,40 @@ Message
 Rmd
 </td>
 <td style="text-align:left;">
+<a href="https://github.com/DongyueXie/stat349/blob/13175cb783f72e82a6c6b8eaae89663e4463aee8/analysis/mulmod.Rmd" target="_blank">13175cb</a>
+</td>
+<td style="text-align:left;">
+Dongyue Xie
+</td>
+<td style="text-align:left;">
+2018-11-25
+</td>
+<td style="text-align:left;">
+wflow_publish(“analysis/mulmod.Rmd”)
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+html
+</td>
+<td style="text-align:left;">
+<a href="https://cdn.rawgit.com/DongyueXie/stat349/4403ad581dad1b962010261fe15be46016fd2fab/docs/mulmod.html" target="_blank">4403ad5</a>
+</td>
+<td style="text-align:left;">
+Dongyue Xie
+</td>
+<td style="text-align:left;">
+2018-11-19
+</td>
+<td style="text-align:left;">
+Build site.
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Rmd
+</td>
+<td style="text-align:left;">
 <a href="https://github.com/DongyueXie/stat349/blob/9d04158728ec3f1de1fdb5f5d1cacc1fb559df45/analysis/mulmod.Rmd" target="_blank">9d04158</a>
 </td>
 <td style="text-align:left;">
@@ -407,302 +443,252 @@ wflow_publish(“analysis/mulmod.Rmd”)
 </ul>
 <p></details></p>
 <hr />
-<pre class="r"><code>library(MCMCglmm)
-library(lme4)
-datax=read.csv(&#39;/Users/dongyue/Documents/phd y1t1/data analysis/archive_edi/Reich2018NaturePaperDataAug2018.csv&#39;)
-datax=datax[-c(25,26,580),]
-colnames(datax)[3]=&#39;trt&#39;
-colnames(datax)[4]=&#39;plot&#39;
-colnames(datax)[13]=&#39;vwc&#39;
-datax$plot=factor(datax$plot)
+<div id="review" class="section level2">
+<h2>Review</h2>
+<p>Data from Reich <em>et al.</em> 2018, Nature.</p>
+<p>2 sites, 6 blocks, 24 plots in total; 11 Species; 2 treatments; 6 measurements.</p>
+<ul>
+<li><p>Group 11 species into two categories: Broad-leaf and needle-leaf.</p></li>
+<li><p>Regard measurement day as random effects: total 49 measurement days. Day is a sub-partition of site.</p></li>
+</ul>
+</div>
+<div id="species" class="section level2">
+<h2>Species</h2>
+<p>Previous: Phototsynthesis v.s. Water content across 11 species:</p>
+<p><img src="figure/mulmod.Rmd/unnamed-chunk-1-1.png" width="672" style="display: block; margin: auto;" /></p>
+</div>
+<div id="species-1" class="section level2">
+<h2>Species</h2>
+<p>Now across 2 species:</p>
+<p><img src="figure/mulmod.Rmd/unnamed-chunk-2-1.png" width="1152" style="display: block; margin: auto;" /></p>
+</div>
+<div id="univariate-lmm" class="section level2">
+<h2>Univariate LMM</h2>
+<p>Photosynthesis as response; species2, treatment, and water content as predictors.</p>
+<p>Model selection gives a Simple model: Photosynthesis ~ water+treatment+species2+treatment:species2+treatment:water+Random effects.</p>
+<p>Coefficients:</p>
 
-datas=datax
-datas$ci=datas$ci/100
-#year:doy as factor
-datas$day=factor(datas$year):factor(datas$doy)
-#species two categories: fir(abiba), spruce(picgl), pine(pinba,pinst).
-needle=c(&#39;abiba&#39;,&#39;picgl&#39;,&#39;pinba&#39;,&#39;pinst&#39;)
-datas$species2=factor(ifelse(datas$species %in% needle,&#39;needle&#39;,&#39;broad&#39;))
+<pre><code>                         Estimate Std. Error t value
+(Intercept)                  7.01       0.97    7.24
+trtwarmed                   -2.65       0.73   -3.62
+species2needle              -0.78       0.46   -1.68
+water                       21.76       5.08    4.28
+trtwarmed:species2needle    -2.26       0.61   -3.70
+trtwarmed:water             29.67       4.73    6.28</code></pre>
+<p>Standard deviation of random components:</p>
 
-#scale data
+<pre><code>  day  plot block       
+ 2.12  0.24  0.58  4.80 </code></pre>
+</div>
+<div id="species-as-random-effects" class="section level2">
+<h2>Species as random effects</h2>
+<pre class="r"><code>mod2=lmer(Asat~trt*water+(1|day)+(1|block)+(1|plot)+(1|species2),data=datas)</code></pre>
+<p>Coefficients:</p>
 
-library(dplyr)
-datas = datas %&gt;% mutate_if(colnames(datas)%in%c(&#39;Asat&#39;,&#39;gs&#39;,&#39;ci&#39;,&#39;vwc&#39;,&#39;tleaf&#39;,&#39;VPG&#39;),function(x){return(scale(x))})
+<pre><code>                Estimate Std. Error t value
+(Intercept)         6.32       1.35    4.69
+trtwarmed          -3.00       0.73   -4.12
+water              21.48       5.09    4.22
+trtwarmed:water    29.57       4.74    6.23</code></pre>
+<p>Standard deviation of random components:</p>
 
-##############
+<pre><code>     day     plot    block species2          
+    2.13     0.24     0.57     1.31     4.82 </code></pre>
+</div>
+<div id="conditional-independence" class="section level2">
+<h2>Conditional independence</h2>
+<p>Is photosynthesis independent of treatment given water content?</p>
+<ul>
+<li>Conditional multual information. <span class="math inline">\(I(X,Y|Z)=E(\log\frac{P(X,Y|Z)}{P(X|Z)P(Y|Z)})\)</span>. It is proportional to the log-likelihood ratio test <span class="math inline">\(G^2\)</span> (they differ by a 2n factor, where n is the sample size) and it is related to the deviance of the tested models(Scutari, M. (2009), page 5, <a href="https://arxiv.org/pdf/0908.3817.pdf" class="uri">https://arxiv.org/pdf/0908.3817.pdf</a>, <a href="https://www.rdocumentation.org/packages/bnlearn/versions/4.4/topics/ci.test">ci.test</a>).</li>
+</ul>
 
-datas.needle=datas[datas$species2==&#39;needle&#39;,]
-prior.R=cov(na.omit(datas)[,c(10,11,12,13,14,15)])
-mod.asat=lmer(Asat~trt+(1|site)+(1|block)+(1|plot)+(1|day),data=datas.needle)
-mod.gs=lmer(gs~trt+(1|site)+(1|block)+(1|plot)+(1|day),data=na.omit(datas.needle))
-mod.vwc=lmer(vwc~trt+(1|site)+(1|block)+(1|plot)+(1|day),data=na.omit(datas.needle))
-mod.tleaf=lmer(tleaf~trt+(1|site)+(1|block)+(1|plot)+(1|day),data=datas.needle)
-mod.VPG=lmer(VPG~trt+(1|site)+(1|block)+(1|plot)+(1|day),data=datas.needle)
-mod.ci=lmer(ci~trt+(1|site)+(1|block)+(1|plot)+(1|day),data=na.omit(datas.needle))
+<pre><code>
+    Mutual Information (cond. Gauss.)
 
-mod.asat.vran=data.frame(VarCorr(mod.asat))[,4]
-mod.gs.vran=data.frame(VarCorr(mod.gs))[,4]
-mod.vwc.vran=data.frame(VarCorr(mod.vwc))[,4]
-mod.tleaf.vran=data.frame(VarCorr(mod.tleaf))[,4]
-mod.VPG.vran=data.frame(VarCorr(mod.VPG))[,4]
-mod.ci.vran=data.frame(VarCorr(mod.ci))[,4]
+data:  datas$Asat ~ datas$trt | datas$water
+mi-cg = 89.198, df = 3, p-value &lt; 2.2e-16
+alternative hypothesis: true value is greater than 0</code></pre>
+<ul>
+<li>Linear model?</li>
+</ul>
 
-prior.vran=cbind(mod.asat.vran,mod.gs.vran,mod.vwc.vran,mod.tleaf.vran,mod.VPG.vran,mod.ci.vran)
+<pre><code>Single term deletions
 
-eps=1e-4
+Model:
+Asat ~ water + trt + (1 | day) + (1 | block) + (1 | plot) + (1 | 
+    species2)
+       Df   AIC   LRT   Pr(Chi)    
+&lt;none&gt;    11449                    
+water   1 11462 15.02 &lt; 2.2e-16 ***
+trt     1 11457  9.86 &lt; 2.2e-16 ***
+---
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
+</div>
+<div id="conditional-independence-1" class="section level2">
+<h2>Conditional independence</h2>
+<p>Is leaf diffusive conductance indepednent of treatment given water content?</p>
+<ul>
+<li>Conditional multual information</li>
+</ul>
 
-V1=diag(prior.vran[1,]+eps)
-V2=diag(prior.vran[2,]+eps)
-V3=diag(prior.vran[3,]+eps)
-V4=diag(prior.vran[4,]+eps)
+<pre><code>
+    Mutual Information (cond. Gauss.)
 
-prior.needle=list(R = list(V = prior.R,nu=1),
-           G=list(G1=list(V=V1,nu=4),
-                  G2=list(V=V2,nu=3),
-                  G3=list(V=V3,nu=2),
-                  G4=list(V=V4,nu=2)))
+data:  datas$gs ~ datas$trt | datas$water
+mi-cg = 49.392, df = 3, p-value = 1.077e-10
+alternative hypothesis: true value is greater than 0</code></pre>
+<ul>
+<li>Linear model?</li>
+</ul>
 
-prior.I=list(R = list(V = diag(6),nu=1),
-           G=list(G1=list(V=diag(6),nu=4),
-                  G2=list(V=diag(6),nu=3),
-                  G3=list(V=diag(6),nu=2),
-                  G4=list(V=diag(6),nu=2)))
+<pre><code>Single term deletions
 
-mulmod.needle=MCMCglmm(cbind(Asat,gs,vwc,tleaf,VPG,ci)~trait*trt,
-                random=~idh(trait):site+idh(trait):block+
-                  idh(trait):plot+idh(trait):day,rcov=~us(trait):units,
-                prior = prior.I,
-                family = c(&quot;gaussian&quot;,&quot;gaussian&quot;,&quot;gaussian&quot;,&quot;gaussian&quot;,&quot;gaussian&quot;,&quot;gaussian&quot;),
-                data=datas.needle,nitt=10000,burnin = 3000,thin = 10)
-
-#13000 iteration is enough
-#strong prior(nu=5 for site) makes the random effects of sites mix better.
-
-# mulmod.needle2=MCMCglmm(cbind(Asat,gs,vwc,tleaf,VPG,ci)~trait*trt,
-#                 random=~idh(trait):site+idh(trait):block+
-#                   idh(trait):plot+idh(trait):day,rcov=~us(trait):units,
-#                 prior = prior.needle,
-#                 family = c(&quot;gaussian&quot;,&quot;gaussian&quot;,&quot;gaussian&quot;,&quot;gaussian&quot;,&quot;gaussian&quot;,&quot;gaussian&quot;),
-#                 data=datas.needle,nitt=13000,burnin = 3000,thin = 10)
-
-
-#broad leaf
-
-datas.broad=datas[datas$species2==&#39;broad&#39;,]
-prior.R=cov(na.omit(datas)[,c(10,11,12,13,14,15)])
-mod.asat=lmer(Asat~trt+(1|site)+(1|block)+(1|plot)+(1|day),data=datas.broad)
-mod.gs=lmer(gs~trt+(1|site)+(1|block)+(1|plot)+(1|day),data=na.omit(datas.broad))
-mod.vwc=lmer(vwc~trt+(1|site)+(1|block)+(1|plot)+(1|day),data=na.omit(datas.broad))
-mod.tleaf=lmer(tleaf~trt+(1|site)+(1|block)+(1|plot)+(1|day),data=datas.broad)
-mod.VPG=lmer(VPG~trt+(1|site)+(1|block)+(1|plot)+(1|day),data=datas.broad)
-mod.ci=lmer(ci~trt+(1|site)+(1|block)+(1|plot)+(1|day),data=na.omit(datas.broad))
-
-mod.asat.vran=data.frame(VarCorr(mod.asat))[,4]
-mod.gs.vran=data.frame(VarCorr(mod.gs))[,4]
-mod.vwc.vran=data.frame(VarCorr(mod.vwc))[,4]
-mod.tleaf.vran=data.frame(VarCorr(mod.tleaf))[,4]
-mod.VPG.vran=data.frame(VarCorr(mod.VPG))[,4]
-mod.ci.vran=data.frame(VarCorr(mod.ci))[,4]
-
-prior.vran=cbind(mod.asat.vran,mod.gs.vran,mod.vwc.vran,mod.tleaf.vran,mod.VPG.vran,mod.ci.vran)
-
-eps=1e-4
-
-V1=diag(prior.vran[1,]+eps)
-V2=diag(prior.vran[2,]+eps)
-V3=diag(prior.vran[3,]+eps)
-V4=diag(prior.vran[4,]+eps)
-
-prior.broad=list(R = list(V = prior.R,nu=1),
-           G=list(G1=list(V=V1,nu=2),
-                  G2=list(V=V2,nu=2),
-                  G3=list(V=V3,nu=2),
-                  G4=list(V=V4,nu=2)))
-
-mulmod.broad=MCMCglmm(cbind(Asat,gs,vwc,tleaf,VPG,ci)~trait*trt,
-                random=~idh(trait):site+idh(trait):block+
-                  idh(trait):plot+idh(trait):day,rcov=~us(trait):units,
-                prior = prior.broad,
-                family = c(&quot;gaussian&quot;,&quot;gaussian&quot;,&quot;gaussian&quot;,&quot;gaussian&quot;,&quot;gaussian&quot;,&quot;gaussian&quot;),
-                data=datas.broad,nitt=13000,burnin = 3000,thin = 10)
-
-######################3
-#together+species2 as fixed effect
-
-prior.R=cov(na.omit(datas)[,c(10,11,12,13,14,15)])
-datas.p=na.omit(datas)
-mod.asat=lmer(Asat~trt*species2+(1|site)+(1|block)+(1|plot)+(1|day),data=datas.p)
-mod.gs=lmer(gs~trt*species2+(1|site)+(1|block)+(1|plot)+(1|day),data=(datas.p))
-mod.vwc=lmer(vwc~trt*species2+(1|site)+(1|block)+(1|plot)+(1|day),data=(datas.p))
-mod.tleaf=lmer(tleaf~trt*species2+(1|site)+(1|block)+(1|plot)+(1|day),data=datas.p)
-mod.VPG=lmer(VPG~trt*species2+(1|site)+(1|block)+(1|plot)+(1|day),data=datas.p)
-mod.ci=lmer(ci~trt*species2+(1|site)+(1|block)+(1|plot)+(1|day),data=(datas.p))
-
-mod.asat.vran=data.frame(VarCorr(mod.asat))[,4]
-mod.gs.vran=data.frame(VarCorr(mod.gs))[,4]
-mod.vwc.vran=data.frame(VarCorr(mod.vwc))[,4]
-mod.tleaf.vran=data.frame(VarCorr(mod.tleaf))[,4]
-mod.VPG.vran=data.frame(VarCorr(mod.VPG))[,4]
-mod.ci.vran=data.frame(VarCorr(mod.ci))[,4]
-
-prior.vran=cbind(mod.asat.vran,mod.gs.vran,mod.vwc.vran,mod.tleaf.vran,mod.VPG.vran,mod.ci.vran)
-
-eps=1e-3
-
-V1=diag(prior.vran[1,]+eps)
-V2=diag(prior.vran[2,]+eps)
-V3=diag(prior.vran[3,]+eps)
-V4=diag(prior.vran[4,]+eps)
-
-## seting nu to be 1,4,4,4,4 gives almost same results as setting them to be 6,6,6,6,6.
-
-prior.all=list(R = list(V = prior.R,nu=6),
-               G=list(G1=list(V=V1,nu=6,alpha.mu=rep(0,6),alpha.V=diag(6)*1e3),
-                  G2=list(V=V2,nu=6,alpha.mu=rep(0,6),alpha.V=diag(6)*1e3),
-                  G3=list(V=V3,nu=6,alpha.mu=rep(0,6),alpha.V=diag(6)*1e3),
-                  G4=list(V=V4,nu=6,alpha.mu=rep(0,6),alpha.V=diag(6)*1e3)))
-
-mulmod=MCMCglmm(cbind(Asat,gs,vwc,tleaf,VPG,ci)~trait*trt*species2,
-                random=~idh(trait):site+idh(trait):block+
-                  idh(trait):plot+idh(trait):day,rcov=~us(trait):units,
-                prior = prior.all,
-                family = c(&quot;gaussian&quot;,&quot;gaussian&quot;,&quot;gaussian&quot;,&quot;gaussian&quot;,&quot;gaussian&quot;,&quot;gaussian&quot;),
-                data=datas,nitt=13000,burnin = 3000,thin = 10)
-library(&quot;qgraph&quot;)
-ss=summary(mulmod.needle)
-R=ss$Rcovariances[,1]
-R=matrix(R,6,6,byrow = T)
-colnames(R)=c(&#39;Asat&#39;,&#39;gs&#39;,&#39;vwc&#39;,&#39;tleaf&#39;,&#39;VPG&#39;,&#39;ci&#39;)
-rownames(R)=c(&#39;Asat&#39;,&#39;gs&#39;,&#39;vwc&#39;,&#39;tleaf&#39;,&#39;VPG&#39;,&#39;ci&#39;)
-
-qgraph(round(R,5),edge.labels=TRUE,graph=&quot;concentration&quot;)</code></pre>
-<p>univariate model linear</p>
-<pre class="r"><code>datas=datax
-datas$ci=datas$ci/100
-#year:doy as factor
-datas$day=factor(datas$year):factor(datas$doy)
-#species two categories: fir(abiba), spruce(picgl), pine(pinba,pinst).
-needle=c(&#39;abiba&#39;,&#39;picgl&#39;,&#39;pinba&#39;,&#39;pinst&#39;)
-datas$species2=factor(ifelse(datas$species %in% needle,&#39;needle&#39;,&#39;broad&#39;))
-
-#
-mod1=lmer(Asat~trt*species2*vwc+(1|site)+(1|block)+(1|plot)+(1|day),data=datas)</code></pre>
-<p>Two reponses at a time:</p>
-<pre class="r"><code>prior2=list(R = list(V = diag(2),nu=1),
-               G=list(G1=list(V=diag(2),nu=1,alpha.mu=rep(0,2),alpha.V=diag(2)*1e3),
-                  G2=list(V=diag(2),nu=1,alpha.mu=rep(0,2),alpha.V=diag(2)*1e3),
-                  G3=list(V=diag(2),nu=1,alpha.mu=rep(0,2),alpha.V=diag(2)*1e3)
-                  ))
-mulmod.broad=MCMCglmm(cbind(Asat,vwc)~trait*trt,
-                      random=~us(trait):block+
-                          us(trait):plot+us(trait):day,rcov=~us(trait):units,
-                      prior = prior2,
-                      family = c(&quot;gaussian&quot;,&quot;gaussian&quot;),
-                      data=na.omit(datas.broad),nitt=13000,burnin = 3000,thin = 10)</code></pre>
-<p>Is each day different site? plot? block?</p>
-<p>results: each day corresponds to different site; have some same blocks; have some same plots.</p>
-<pre class="r"><code>idx=c()
-for (dd in unique(datas$day)) {
-  if(length(unique(datas[datas$day==dd,]$site))==1){
-    idx=c(idx,1)
-  }else{
-    idx=c(idx,0)
-  }
-}</code></pre>
-<p><span class="math display">\[ Y \sim N(X \beta, \tau_0 Z_0 + \tau_1 Z_1),\]</span> where <span class="math inline">\(Z_0\)</span> is a identity matrix and <span class="math inline">\(Z_1\)</span></p>
-<p>try mcglm package</p>
-<pre class="r"><code>dat=na.omit(datas.broad)
-#number of observations
-N=dim(dat)[1]
-#number of days
-nd=length(unique((dat$day)))
-#number of block
-nb=length(unique((dat$block)))
-#numebr of plot
-np=length(unique((dat$plot)))
-#total number of random effect levels
-q=nd+nb+np
-library(mcglm)
-#random effect structure
-
-#response 1 day var sturcture
-v1d=Diagonal(2*q,c(rep(1,nd),rep(0,2*q-nd)))
-#response 1 block
-v1b=Diagonal(2*q,c(rep(0,nd),rep(1,nb),rep(0,2*q-nd-nb)))
-#response 1 plot
-v1p=Diagonal(2*q,c(rep(0,nd),rep(0,nb),rep(1,np),rep(0,q)))
-
-#response 2 day
-v2d=Diagonal(2*q,c(rep(0,q),rep(1,nd),rep(0,q-nd)))
-#response 2 block
-v2b=Diagonal(2*q,c(rep(0,q+nd),rep(1,nb),rep(0,np)))
-#response 2 plot
-v2p=Diagonal(2*q,c(rep(0,q+nd+nb),rep(1,np)))
-
-#cov of random effects
-#cov of day
-v11=Matrix(0,q,q);v22=Matrix(0,q,q)
-v12=Diagonal(q,c(rep(1,nd),rep(0,q-nd)))
-v21=v12
-covd=rbind2(cbind2(v11,v12),cbind2(v21,v22))
-
-#cov of block
-v11=Matrix(0,q,q);v22=Matrix(0,q,q)
-v12=Diagonal(q,c(rep(0,nd),rep(1,nb),rep(0,np)))
-v21=v12
-covb=rbind2(cbind2(v11,v12),cbind2(v21,v22))
-
-#cov of plot
-v11=Matrix(0,q,q);v22=Matrix(0,q,q)
-v12=Diagonal(q,c(rep(0,nd),rep(0,nb),rep(1,np)))
-v21=v12
-covp=rbind2(cbind2(v11,v12),cbind2(v21,v22))
-
-#######
-#cov structure of random error
-#var of response 1
-var1=Diagonal(2*N,c(rep(1,N),rep(0,N)))
-#var of response 2
-var2=Diagonal(2*N,c(rep(0,N),rep(1,N)))
-#cov of 1 &amp; 2
-v11=Matrix(0,N,N);v22=v11
-v12=Diagonal(N,rep(1,N))
-v21=v12
-cov12=rbind2(cbind2(v11,v12),cbind2(v21,v22))
-
-##construct matrix Z...
-
-Z12=Matrix(0,N,q);Z21=Z12
-#get the random effect design matrix Z11
-ll=lmer((Asat)~(1|day)+(1|block)+(1|plot),data=dat)
-Z11=getME(ll,&#39;Z&#39;)
-Z22=Z11
-Z=rbind2(cbind2(Z11,Z12),cbind2(Z21,Z22))
-
-########################
-
-#get all the cov structure of y!
-ran1d=Z%*%v1d%*%t(Z)
-ran1b=Z%*%v1b%*%t(Z)
-ran1p=Z%*%v1p%*%t(Z)
-
-ran2d=Z%*%v2d%*%t(Z)
-ran2b=Z%*%v2b%*%t(Z)
-ran2p=Z%*%v2p%*%t(Z)
-
-ran12d=Z%*%covd%*%t(Z)
-ran12b=Z%*%covb%*%t(Z)
-ran12p=Z%*%covp%*%t(Z)
-
-dat.mod=rbind(dat,dat)
-dat.mod$y=c(dat$Asat,dat$vwc)
-
-needle.mod=mcglm(linear_pred =c(y~trt),
-                matrix_pred = list(list(ran1d,ran1b,ran1p,ran2d,ran2b,ran2p,ran12d,ran12b,ran12p,var1,var2,cov12)),
-                data=dat.mod)</code></pre>
+Model:
+gs ~ water + trt + (1 | day) + (1 | block) + (1 | plot) + (1 | 
+    species2)
+       Df     AIC  LRT Pr(Chi)    
+&lt;none&gt;    -2484.9                 
+water   1 -2468.8 18.1  &lt;2e-16 ***
+trt     1 -2486.9  0.0    0.99    
+---
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
+</div>
+<div id="bivariate-response-model" class="section level2">
+<h2>Bivariate response model</h2>
+<p>Respone: Photosynthesis, water content. Predictors: treatment. Random effects: day, block, plot.</p>
+<ul>
+<li>A bivariated model for each of 2 species.</li>
+</ul>
+<p>For needle-leaf species:</p>
+<ul>
+<li>First fit unstructured cov matrices. Based on <span class="math inline">\(95%\)</span> credible intervals, only covariance between PS and water in day is significant.</li>
+</ul>
+<p>Fixed effects:</p>
+<pre><code>                     post.mean l-95% CI u-95% CI
+(Intercept)             11.163    9.261   13.217
+traitwater             -10.993  -13.007   -9.065
+trtwarmed               -1.871   -2.889   -0.790
+traitwater:trtwarmed     1.833    0.721    2.816</code></pre>
+<p>Cov and Cor - day</p>
+<pre><code>          PS Water
+PS    10.236 0.073
+Water  0.073 0.001</code></pre>
+<pre><code>         PS Water
+PS    1.000 0.726
+Water 0.726 1.000</code></pre>
+<p>Sd: block, plot, random error</p>
+<pre><code> traitAsat.block traitwater.block 
+            0.15             0.03 </code></pre>
+<pre><code> traitAsat.plot traitwater.plot 
+          0.060           0.001 </code></pre>
+<pre><code> traitAsat.units traitwater.units 
+            4.14             0.06 </code></pre>
+</div>
+<div id="bivariate-model" class="section level2">
+<h2>Bivariate model</h2>
+<p>For broad-leaf species:</p>
+<p>Fixed effects:</p>
+<pre><code>                     post.mean l-95% CI u-95% CI
+(Intercept)              10.62     9.07    11.89
+traitwater              -10.45   -11.72    -8.91
+trtwarmed                 0.43    -0.07     0.91
+traitwater:trtwarmed     -0.47    -0.95     0.03</code></pre>
+<p>Cov and Cor - day</p>
+<pre><code>          PS Water
+PS    10.576 0.070
+Water  0.070 0.001</code></pre>
+<pre><code>         PS Water
+PS    1.000 0.621
+Water 0.621 1.000</code></pre>
+<p>Sd: block, plot and random error</p>
+<pre><code> traitAsat.block traitwater.block 
+            0.53             0.03 </code></pre>
+<pre><code> traitAsat.plot traitwater.plot 
+           0.04            0.01 </code></pre>
+<pre><code> traitAsat.units traitwater.units 
+            4.73             0.03 </code></pre>
+</div>
+<div id="more" class="section level2">
+<h2>More</h2>
+<p>Respones: Photosynthesis v.s. tleaf</p>
+<p>Needle-leaf species: None of the covariances between two reponses are significant.</p>
+<p>Fixed effects:</p>
+<pre><code>                     post.mean l-95% CI u-95% CI
+(Intercept)              11.18     9.33    13.44
+traittleaf               12.83     8.41    16.79
+trtwarmed                -1.90    -2.91    -0.82
+traittleaf:trtwarmed      2.47     1.05     3.86</code></pre>
+<p>Sd: block, plot and random error</p>
+<pre><code> traitAsat.day traittleaf.day 
+          3.34           6.00 </code></pre>
+<pre><code> traitAsat.block traittleaf.block 
+            0.71             1.48 </code></pre>
+<pre><code> traitAsat.plot traittleaf.plot 
+           0.07            0.69 </code></pre>
+<pre><code> traitAsat.units traittleaf.units 
+            4.06             2.64 </code></pre>
+</div>
+<div id="more-1" class="section level2">
+<h2>More</h2>
+<p>Broad-leaf species</p>
+<p>Fixed effects:</p>
+<pre><code>                     post.mean l-95% CI u-95% CI
+(Intercept)              10.57     9.23    12.00
+traittleaf               15.98    13.54    19.02
+trtwarmed                 0.46    -0.02     1.02
+traittleaf:trtwarmed      0.07    -0.83     1.03</code></pre>
+<p>Cov and Cor - day</p>
+<pre><code>         PS  Water
+PS    9.223  4.925
+Water 4.925 28.651</code></pre>
+<pre><code>         PS Water
+PS    1.000 0.303
+Water 0.303 1.000</code></pre>
+<p>Cov and Cor - random error</p>
+<pre><code>          PS  Water
+PS    22.691 -1.239
+Water -1.239  6.960</code></pre>
+<pre><code>          PS  Water
+PS     1.000 -0.099
+Water -0.099  1.000</code></pre>
+<p>Sd: block, plot</p>
+<pre><code> traitAsat.block traittleaf.block 
+            0.55             1.39 </code></pre>
+<pre><code> traitAsat.plot traittleaf.plot 
+           0.03            0.75 </code></pre>
+</div>
 <div id="session-information" class="section level2">
 <h2>Session information</h2>
-<pre class="r"><code>sessionInfo()</code></pre>
+<pre><code>R version 3.5.1 (2018-07-02)
+Platform: x86_64-apple-darwin15.6.0 (64-bit)
+Running under: macOS High Sierra 10.13.6
+
+Matrix products: default
+BLAS: /Library/Frameworks/R.framework/Versions/3.5/Resources/lib/libRblas.0.dylib
+LAPACK: /Library/Frameworks/R.framework/Versions/3.5/Resources/lib/libRlapack.dylib
+
+locale:
+[1] en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8
+
+attached base packages:
+[1] stats     graphics  grDevices utils     datasets  methods   base     
+
+other attached packages:
+[1] bnlearn_4.4   MCMCglmm_2.26 ape_5.2       coda_0.19-2   lme4_1.1-18-1
+[6] Matrix_1.2-14
+
+loaded via a namespace (and not attached):
+ [1] Rcpp_0.12.18      knitr_1.20        whisker_0.3-2    
+ [4] magrittr_1.5      workflowr_1.1.1   splines_3.5.1    
+ [7] MASS_7.3-50       cubature_1.4-1    lattice_0.20-35  
+[10] minqa_1.2.4       stringr_1.3.1     tools_3.5.1      
+[13] parallel_3.5.1    grid_3.5.1        nlme_3.1-137     
+[16] R.oo_1.22.0       corpcor_1.6.9     git2r_0.23.0     
+[19] htmltools_0.3.6   yaml_2.2.0        rprojroot_1.3-2  
+[22] digest_0.6.17     tensorA_0.36.1    nloptr_1.2.1     
+[25] R.utils_2.7.0     evaluate_0.11     rmarkdown_1.10   
+[28] stringi_1.2.4     compiler_3.5.1    backports_1.1.2  
+[31] R.methodsS3_1.7.1</code></pre>
 </div>
 
 <!-- Adjust MathJax settings so that all math formulae are shown using
