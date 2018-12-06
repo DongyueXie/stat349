@@ -1,0 +1,75 @@
+---
+title: "Experiment"
+author: "Dongyue Xie"
+date: "2018-10-17"
+output: workflowr::wflow_html
+---
+
+# The original experiment
+
+## Study sites
+
+The warming facility was installed at two sites, **~150 km apart**, in forests. One site was located at the Cloquet Forestry Center (CFC), the other higher latitude site was at the Hubachek Wilderness Research Center (HWRC). 
+
+Plots were located in both **closed canopy** (≈5–10% of full sunlight) and **open overstory** (≈80% of full sunlight) conditions. Initial site development occurred in 2007 and 2008 and included dividing stands into **six experimental blocks**.(There are **six experimental blocks** for each site) Blocks designated as open canopy sites were harvested, and stumps were cut to less than 30 cm height. All blocks were brush cut by hand to remove tree saplings and shrubs. Individual plots were established by selecting patches of level ground at least 1 m from canopy trees or remaining stumps. Individual plots were located in proximity to one another but **no closer than 2 m apart** to facilitate the delivery and monitoring of warming treatments.
+
+## Experimental Design
+
+The experimental design is a **2 (site – CFC and HWRC) × 2 (habitat – open and closed overstory) × 3 (warming − ambient, +1.7 °C, and +3.4 °C) factorial**, with **six replicates (2 per block)** for a total of **72–7.1 $m^2$ circular plots**. Within each plot, **121 seedlings of 11 tree species** were planted into the remaining herbaceous vegetation in a gridded design. A picture shows the design for each site is [here](https://onlinelibrary.wiley.com/action/downloadSupplement?doi=10.1111%2Fgcb.12855&file=gcb12855-sup-0001-FigS1.png). [A picture](https://onlinelibrary.wiley.com/action/downloadSupplement?doi=10.1111%2Fgcb.12855&file=gcb12855-sup-0002-FigS2.jpg) for aboveground and belowground feedback control systems for B4WarmED experiments. See [Figure 1](https://onlinelibrary.wiley.com/doi/10.1111/gcb.12855) for pictures for plots and [Figure 1](https://www.nature.com/articles/srep06890) for exemplary plots of the B4WarmED experiment. 
+
+# Available data experiment
+
+The available dataset of the experiment is only a part of whole experiment: **3 overstory blocks at each site; dropped +1.7 °C warming treatment. So there are total 6 blocks and 24 plots**. 
+
+11 species: **six native broadleaf** (Acer rubrum, Acer saccharum, Betula papyrifera, Populus tremuloides, Quercus macrocarpa and Quercus rubra), **one naturalized broadleaf** (Rhamnus cathartica) and **four native needle leaved** (Abies balsamea, Picea glauca, Pinus banksiana and Pinus strobus) species.
+
+Warming: both open-air(using infrared lamp heaters) and soil warming(soil heating cables). On average, we achieved 24-h per day average warming of **+3.4 °C (during April–November)** and midsummer midday (09:00–15:00 during June–September) aboveground warming of +2.9 °C across the 2009–2011 growing seasons. 
+
+**Measurements were made throughout the growing seasons (June–September) of 2009–2011**. A total of 2,052 measurements of Anet and 1,964 of gs were made on a total of 1,338 individuals on 54 dates across species, treatments, sites and time (1,991 and 1,903 measurements, respectively were made with matching soil VWC data). Individuals were three- to five-years old at the time of measurements. **Measurements were made in morning or early afternoon (that is, typically between 08:30–14:00 solar time)**.
+
+Not all species were measured each year owing to the time-consuming nature of the measurements (five species were measured in all three years, four in two years and two in one year). On every measurement date, any species included in that sampling was measured equally across contrasting warming treatments. **Individuals to be sampled were chosen randomly from those not previously sampled. Every measurement was made on a unique leaf**. 
+
+Over the three years, individual plants were usually measured once (n=839) or twice (n=338), but owing to low survival in some species, other individuals were measured three (n=121), four (n=30), five (n=6) or six (n=4) times. Fully expanded, healthy upper canopy leaves were sampled from individuals in both ambient and +3.4°C treatments at both sites. 
+
+For the information on dataset, see [here](https://doi.org/10.6073/pasta/258239f68244c959de0f97c922ac313f)
+
+
+## Replies from Author
+
+
+1. My understanding is that there were 8 plots in each block but only 4 plots were used in the experiments. Is this correct?
+
+```{r,echo=F}
+tolower('WE USED 24 PLOTS IN TOTAL…..THESE WERE AMBIENT AND +3.4C TREATMENTS AT TWO SITES, IN OPEN CANOPY CONDITIONS.  EACH BLOCK ORIGINALLY HAD 8 PLOTS, WE USED FOUR OF THESE IN THE THREE OPEN CANOPY BLOCKS AT EACH SITE.')
+```
+
+In the dataset, at site cfc, there are only two measurements from d1 plot while around 80 measurements from d3,d4,d5,d6 plots. I wonder why there were measurements from d1 since only 4 plots were used in each block.
+
+```{r,echo=F}
+tolower('THAT IS EITHER A MISTAKE OF SOME KIND IN THE DATA SHEET OR WE MEASURED A SPECIES ON A NEARBY AMBIENT PLOT IF THAT SPECIES WAS MISSING FROM THE TARGET AMBIENT PLOT [WE HAD TWO KINDS OF AMBIENT PLOTS WHICH WERE VIRTUALLY INDISTINGUISHABLE]. I WILL CHECK! LOOKING AT THE DATA SHEET I SEE A COUPLE OF OTHER SITUATIONS THAT NEED TO BE LOOKED INTO. THANKS FOR NOTICING THIS!')
+```
+
+2. What are distance between plots and how are they distributed? I want to make sure that there was no intervention between treatments, i.e. the warming treatments did not affect the ambient ones. 
+
+```{r,echo=F}
+tolower('WE CHECKED ON THIS INITIALLY AND ARE CONFIDENT THAT IT IS TRUE. ARTUR OR ROY, COULD YOU ADD MORE? ARTUR IF YOU LOOK AT OUR EDI DATA AND SUMMARIZE BY SITE, BLOCK, PLOT ID, AND WARMING TREATMENT YOU WILL SEE THREE INSTANCES WITH N=1 OR 2 (ALL OTHERS WERE N=75 TO 93). COULD YOU CHECK TO SEE WHETHER THOSE ARE TYPED INCORRECTLY OR REPRESENT MEASURES ON THE OTHERWISE LITTLE USED AMBIENT PLOTS WHEN A SPECIES WAS MISSING ON AN AMBIENT PLOT OR WHETHER THERE IS SOME OTHER EXPLANATION?')
+  
+```
+
+3. It seems that there were total 11*11=121 trees planted in a 3-meter diameter circle. I wonder if this is too dense or not? Because each tree only had an area of around 28cm diameter circle.
+
+```{r, echo=F}
+tolower('THE TREES WERE PLANTED AS SEEDLINGS (1-2 YEARS OLD I BELIEVE; YOU CAN CHECK THE METHODS) SO YES THEY WERE CLOSELY SPACED.  BUT, THE OVERALL DENSITY OF VEGETATION (INCLUDING PLANTED SEEDLINGS, AND NATIVE GRASSES, FORBS AND SHRUBS THAT WERE ON THE SITES WE PLANTED INTO) WAS SIMILAR TO REGROWTH NEAR THE PLOTS WHICH WERE SIMILARLY DENSE WITH YOUNG TREES, SHRUBS, FORBS AND GRASSES.  SO WE BELIEVE OUR EXPERIMENT ACTUALLY WAS RELATIVELY REALISTIC, MUCH MORE SO THAN CLEARING ALL VEGETATION AND PLANTING A YOUNG TREE WITHOUT COMPETITION FROM NEIGHBORS.')
+```
+
+
+
+## Reference 
+
+[Rich, R. L., Stefanski, A. , Montgomery, R. A., Hobbie, S. E., Kimball, B. A. and Reich, P. B. (2015), Design and performance of combined infrared canopy and belowground warming in the B4WarmED (Boreal Forest Warming at an Ecotone in Danger) experiment. Glob Change Biol, 21: 2334-2348.](https://onlinelibrary.wiley.com/action/showCitFormats?doi=10.1111%2Fgcb.12855)
+
+[B4WARMED: Boreal Forest Warming at an Ecotone in Danger](https://forestecology.cfans.umn.edu/research/climate-change/b4warmed)
+
+[Reich, P. B., Sendall, K. M., Stefanski, A., Rich, R. L., Hobbie, S. E., & Montgomery, R. A. (2018). Effects of climate warming on photosynthesis in boreal tree species depend on soil moisture. Nature, 1.](https://www.nature.com/articles/s41586-018-0582-4)
+
+
