@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+
+
+<meta name="author" content="Dongyue Xie" />
+
+<meta name="date" content="2018-10-17" />
+
+<title>Experiment</title>
+
+<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/cosmo.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-9.12.0/textmate.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+<link href="site_libs/font-awesome-5.0.13/css/fa-svg-with-js.css" rel="stylesheet" />
+<script src="site_libs/font-awesome-5.0.13/js/fontawesome-all.min.js"></script>
+<script src="site_libs/font-awesome-5.0.13/js/fa-v4-shims.min.js"></script>
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
+
+
+</head>
+
+<body>
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+  height: auto;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+</style>
+
+
+<style type="text/css">
+/* padding for bootstrap navbar */
+body {
+  padding-top: 51px;
+  padding-bottom: 40px;
+}
+/* offset scroll position for anchor links (for fixed navbar)  */
+.section h1 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+
+.section h2 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h3 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h4 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h5 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h6 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+</style>
+
+<script>
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.parent().addClass('active');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+});
+</script>
+
+
+<div class="container-fluid main-container">
+
+<!-- tabsets -->
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+</script>
+
+<!-- code folding -->
+
+
+
+
+<script>
+$(document).ready(function ()  {
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+  padding-left: 25px;
+  text-indent: 0;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row-fluid">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">stat349</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">Home</a>
+</li>
+<li>
+  <a href="about.html">About</a>
+</li>
+<li>
+  <a href="license.html">License</a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+  <a href="https://github.com/jdblischak/workflowr">
+    <span class="fa fa-github"></span>
+     
+  </a>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<!-- Add a small amount of space between sections. -->
+<style type="text/css">
+div.section {
+  padding-top: 12px;
+}
+</style>
+
+<div class="fluid-row" id="header">
+
+
+
+<h1 class="title toc-ignore">Experiment</h1>
+<h4 class="author"><em>Dongyue Xie</em></h4>
+<h4 class="date"><em>2018-10-17</em></h4>
+
+</div>
+
+
+<p><strong>Last updated:</strong> 2018-12-06</p>
+<strong>workflowr checks:</strong> <small>(Click a bullet for more information)</small>
+<ul>
+<li>
+<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>R Markdown file:</strong> up-to-date </summary></p>
+<p>Great! Since the R Markdown file has been committed to the Git repository, you know the exact version of the code that produced these results.</p>
+</details>
+</li>
+<li>
+<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>Environment:</strong> empty </summary></p>
+<p>Great job! The global environment was empty. Objects defined in the global environment can affect the analysis in your R Markdown file in unknown ways. For reproduciblity it’s best to always run the code in an empty environment.</p>
+</details>
+</li>
+<li>
+<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>Seed:</strong> <code>set.seed(20181017)</code> </summary></p>
+<p>The command <code>set.seed(20181017)</code> was run prior to running the code in the R Markdown file. Setting a seed ensures that any results that rely on randomness, e.g. subsampling or permutations, are reproducible.</p>
+</details>
+</li>
+<li>
+<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>Session information:</strong> recorded </summary></p>
+<p>Great job! Recording the operating system, R version, and package versions is critical for reproducibility.</p>
+</details>
+</li>
+<li>
+<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>Repository version:</strong> <a href="https://github.com/DongyueXie/stat349/tree/a4254bf2bae037363398771a92c6f09d913399e9" target="_blank">a4254bf</a> </summary></p>
+Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility. The version displayed above was the version of the Git repository at the time these results were generated. <br><br> Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
+<pre><code>
+Ignored files:
+    Ignored:    .DS_Store
+    Ignored:    .Rhistory
+    Ignored:    .Rproj.user/
+
+Untracked files:
+    Untracked:  analysis/mulmodpre3.Rmd
+    Untracked:  analysis/report.Rmd
+    Untracked:  docs/figure/mulmodpre3.Rmd/
+    Untracked:  tree.jpg
+
+Unstaged changes:
+    Modified:   analysis/code.Rmd
+    Modified:   analysis/index.Rmd
+    Modified:   analysis/mulmod.Rmd
+
+</code></pre>
+Note that any generated files, e.g. HTML, png, CSS, etc., are not included in this status report because it is ok for generated content to have uncommitted changes. </details>
+</li>
+</ul>
+<details> <summary> <small><strong>Expand here to see past versions:</strong></small> </summary>
+<ul>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+File
+</th>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+<th style="text-align:left;">
+Message
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+Rmd
+</td>
+<td style="text-align:left;">
+<a href="https://github.com/DongyueXie/stat349/blob/a4254bf2bae037363398771a92c6f09d913399e9/analysis/experiment.Rmd" target="_blank">a4254bf</a>
+</td>
+<td style="text-align:left;">
+Dongyue Xie
+</td>
+<td style="text-align:left;">
+2018-12-06
+</td>
+<td style="text-align:left;">
+wflow_publish(“analysis/experiment.Rmd”)
+</td>
+</tr>
+</tbody>
+</table>
+</ul>
+<p></details></p>
+<hr />
+<div id="the-original-experiment" class="section level1">
+<h1>The original experiment</h1>
+<div id="study-sites" class="section level2">
+<h2>Study sites</h2>
+<p>The warming facility was installed at two sites, <strong>~150 km apart</strong>, in forests. One site was located at the Cloquet Forestry Center (CFC), the other higher latitude site was at the Hubachek Wilderness Research Center (HWRC).</p>
+<p>Plots were located in both <strong>closed canopy</strong> (≈5–10% of full sunlight) and <strong>open overstory</strong> (≈80% of full sunlight) conditions. Initial site development occurred in 2007 and 2008 and included dividing stands into <strong>six experimental blocks</strong>.(There are <strong>six experimental blocks</strong> for each site) Blocks designated as open canopy sites were harvested, and stumps were cut to less than 30 cm height. All blocks were brush cut by hand to remove tree saplings and shrubs. Individual plots were established by selecting patches of level ground at least 1 m from canopy trees or remaining stumps. Individual plots were located in proximity to one another but <strong>no closer than 2 m apart</strong> to facilitate the delivery and monitoring of warming treatments.</p>
+</div>
+<div id="experimental-design" class="section level2">
+<h2>Experimental Design</h2>
+<p>The experimental design is a <strong>2 (site – CFC and HWRC) × 2 (habitat – open and closed overstory) × 3 (warming − ambient, +1.7 °C, and +3.4 °C) factorial</strong>, with <strong>six replicates (2 per block)</strong> for a total of <strong>72–7.1 <span class="math inline">\(m^2\)</span> circular plots</strong>. Within each plot, <strong>121 seedlings of 11 tree species</strong> were planted into the remaining herbaceous vegetation in a gridded design. A picture shows the design for each site is <a href="https://onlinelibrary.wiley.com/action/downloadSupplement?doi=10.1111%2Fgcb.12855&amp;file=gcb12855-sup-0001-FigS1.png">here</a>. <a href="https://onlinelibrary.wiley.com/action/downloadSupplement?doi=10.1111%2Fgcb.12855&amp;file=gcb12855-sup-0002-FigS2.jpg">A picture</a> for aboveground and belowground feedback control systems for B4WarmED experiments. See <a href="https://onlinelibrary.wiley.com/doi/10.1111/gcb.12855">Figure 1</a> for pictures for plots and <a href="https://www.nature.com/articles/srep06890">Figure 1</a> for exemplary plots of the B4WarmED experiment.</p>
+</div>
+</div>
+<div id="available-data-experiment" class="section level1">
+<h1>Available data experiment</h1>
+<p>The available dataset of the experiment is only a part of whole experiment: <strong>3 overstory blocks at each site; dropped +1.7 °C warming treatment. So there are total 6 blocks and 24 plots</strong>.</p>
+<p>11 species: <strong>six native broadleaf</strong> (Acer rubrum, Acer saccharum, Betula papyrifera, Populus tremuloides, Quercus macrocarpa and Quercus rubra), <strong>one naturalized broadleaf</strong> (Rhamnus cathartica) and <strong>four native needle leaved</strong> (Abies balsamea, Picea glauca, Pinus banksiana and Pinus strobus) species.</p>
+<p>Warming: both open-air(using infrared lamp heaters) and soil warming(soil heating cables). On average, we achieved 24-h per day average warming of <strong>+3.4 °C (during April–November)</strong> and midsummer midday (09:00–15:00 during June–September) aboveground warming of +2.9 °C across the 2009–2011 growing seasons.</p>
+<p><strong>Measurements were made throughout the growing seasons (June–September) of 2009–2011</strong>. A total of 2,052 measurements of Anet and 1,964 of gs were made on a total of 1,338 individuals on 54 dates across species, treatments, sites and time (1,991 and 1,903 measurements, respectively were made with matching soil VWC data). Individuals were three- to five-years old at the time of measurements. <strong>Measurements were made in morning or early afternoon (that is, typically between 08:30–14:00 solar time)</strong>.</p>
+<p>Not all species were measured each year owing to the time-consuming nature of the measurements (five species were measured in all three years, four in two years and two in one year). On every measurement date, any species included in that sampling was measured equally across contrasting warming treatments. <strong>Individuals to be sampled were chosen randomly from those not previously sampled. Every measurement was made on a unique leaf</strong>.</p>
+<p>Over the three years, individual plants were usually measured once (n=839) or twice (n=338), but owing to low survival in some species, other individuals were measured three (n=121), four (n=30), five (n=6) or six (n=4) times. Fully expanded, healthy upper canopy leaves were sampled from individuals in both ambient and +3.4°C treatments at both sites.</p>
+<p>For the information on dataset, see <a href="https://doi.org/10.6073/pasta/258239f68244c959de0f97c922ac313f">here</a></p>
+<div id="replies-from-author" class="section level2">
+<h2>Replies from Author</h2>
+<ol style="list-style-type: decimal">
+<li>My understanding is that there were 8 plots in each block but only 4 plots were used in the experiments. Is this correct?</li>
+</ol>
+<pre><code>[1] &quot;we used 24 plots in total…..these were ambient and +3.4c treatments at two sites, in open canopy conditions.  each block originally had 8 plots, we used four of these in the three open canopy blocks at each site.&quot;</code></pre>
+<p>In the dataset, at site cfc, there are only two measurements from d1 plot while around 80 measurements from d3,d4,d5,d6 plots. I wonder why there were measurements from d1 since only 4 plots were used in each block.</p>
+<pre><code>[1] &quot;that is either a mistake of some kind in the data sheet or we measured a species on a nearby ambient plot if that species was missing from the target ambient plot [we had two kinds of ambient plots which were virtually indistinguishable]. i will check! looking at the data sheet i see a couple of other situations that need to be looked into. thanks for noticing this!&quot;</code></pre>
+<ol start="2" style="list-style-type: decimal">
+<li>What are distance between plots and how are they distributed? I want to make sure that there was no intervention between treatments, i.e. the warming treatments did not affect the ambient ones.</li>
+</ol>
+<pre><code>[1] &quot;we checked on this initially and are confident that it is true. artur or roy, could you add more? artur if you look at our edi data and summarize by site, block, plot id, and warming treatment you will see three instances with n=1 or 2 (all others were n=75 to 93). could you check to see whether those are typed incorrectly or represent measures on the otherwise little used ambient plots when a species was missing on an ambient plot or whether there is some other explanation?&quot;</code></pre>
+<ol start="3" style="list-style-type: decimal">
+<li>It seems that there were total 11*11=121 trees planted in a 3-meter diameter circle. I wonder if this is too dense or not? Because each tree only had an area of around 28cm diameter circle.</li>
+</ol>
+<pre><code>[1] &quot;the trees were planted as seedlings (1-2 years old i believe; you can check the methods) so yes they were closely spaced.  but, the overall density of vegetation (including planted seedlings, and native grasses, forbs and shrubs that were on the sites we planted into) was similar to regrowth near the plots which were similarly dense with young trees, shrubs, forbs and grasses.  so we believe our experiment actually was relatively realistic, much more so than clearing all vegetation and planting a young tree without competition from neighbors.&quot;</code></pre>
+</div>
+<div id="reference" class="section level2">
+<h2>Reference</h2>
+<p><a href="https://onlinelibrary.wiley.com/action/showCitFormats?doi=10.1111%2Fgcb.12855">Rich, R. L., Stefanski, A. , Montgomery, R. A., Hobbie, S. E., Kimball, B. A. and Reich, P. B. (2015), Design and performance of combined infrared canopy and belowground warming in the B4WarmED (Boreal Forest Warming at an Ecotone in Danger) experiment. Glob Change Biol, 21: 2334-2348.</a></p>
+<p><a href="https://forestecology.cfans.umn.edu/research/climate-change/b4warmed">B4WARMED: Boreal Forest Warming at an Ecotone in Danger</a></p>
+<p><a href="https://www.nature.com/articles/s41586-018-0582-4">Reich, P. B., Sendall, K. M., Stefanski, A., Rich, R. L., Hobbie, S. E., &amp; Montgomery, R. A. (2018). Effects of climate warming on photosynthesis in boreal tree species depend on soil moisture. Nature, 1.</a></p>
+</div>
+<div id="session-information" class="section level2">
+<h2>Session information</h2>
+<pre class="r"><code>sessionInfo()</code></pre>
+<pre><code>R version 3.5.1 (2018-07-02)
+Platform: x86_64-apple-darwin15.6.0 (64-bit)
+Running under: macOS High Sierra 10.13.6
+
+Matrix products: default
+BLAS: /Library/Frameworks/R.framework/Versions/3.5/Resources/lib/libRblas.0.dylib
+LAPACK: /Library/Frameworks/R.framework/Versions/3.5/Resources/lib/libRlapack.dylib
+
+locale:
+[1] en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8
+
+attached base packages:
+[1] stats     graphics  grDevices utils     datasets  methods   base     
+
+loaded via a namespace (and not attached):
+ [1] workflowr_1.1.1   Rcpp_0.12.18      digest_0.6.17    
+ [4] rprojroot_1.3-2   R.methodsS3_1.7.1 backports_1.1.2  
+ [7] git2r_0.23.0      magrittr_1.5      evaluate_0.11    
+[10] stringi_1.2.4     whisker_0.3-2     R.oo_1.22.0      
+[13] R.utils_2.7.0     rmarkdown_1.10    tools_3.5.1      
+[16] stringr_1.3.1     yaml_2.2.0        compiler_3.5.1   
+[19] htmltools_0.3.6   knitr_1.20       </code></pre>
+</div>
+</div>
+
+<!-- Adjust MathJax settings so that all math formulae are shown using
+TeX fonts only; see
+http://docs.mathjax.org/en/latest/configuration.html.  This will make
+the presentation more consistent at the cost of the webpage sometimes
+taking slightly longer to load. Note that this only works because the
+footer is added to webpages before the MathJax javascript. -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    "HTML-CSS": { availableFonts: ["TeX"] }
+  });
+</script>
+
+<hr>
+<p>
+  This reproducible <a href="http://rmarkdown.rstudio.com">R Markdown</a>
+  analysis was created with
+  <a href="https://github.com/jdblischak/workflowr">workflowr</a> 1.1.1
+</p>
+<hr>
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
