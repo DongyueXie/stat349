@@ -323,7 +323,7 @@ div.section {
 </div>
 
 
-<p><strong>Last updated:</strong> 2018-12-06</p>
+<p><strong>Last updated:</strong> 2018-12-09</p>
 <strong>workflowr checks:</strong> <small>(Click a bullet for more information)</small>
 <ul>
 <li>
@@ -347,7 +347,7 @@ div.section {
 </details>
 </li>
 <li>
-<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>Repository version:</strong> <a href="https://github.com/DongyueXie/stat349/tree/93771b8956d70417ba13a5771cc8b4430e029cfb" target="_blank">93771b8</a> </summary></p>
+<p><details> <summary> <strong style="color:blue;">✔</strong> <strong>Repository version:</strong> <a href="https://github.com/DongyueXie/stat349/tree/7247efe07f120a0d953fb794f84dd84422b8e464" target="_blank">7247efe</a> </summary></p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility. The version displayed above was the version of the Git repository at the time these results were generated. <br><br> Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
 <pre><code>
 Ignored files:
@@ -356,9 +356,10 @@ Ignored files:
     Ignored:    .Rproj.user/
 
 Untracked files:
-    Untracked:  analysis/experiment.Rmd
     Untracked:  analysis/mulmodpre3.Rmd
+    Untracked:  analysis/report.Rmd
     Untracked:  docs/figure/mulmodpre3.Rmd/
+    Untracked:  tree.jpg
 
 Unstaged changes:
     Modified:   analysis/mulmod.Rmd
@@ -395,6 +396,40 @@ Message
 Rmd
 </td>
 <td style="text-align:left;">
+<a href="https://github.com/DongyueXie/stat349/blob/7247efe07f120a0d953fb794f84dd84422b8e464/analysis/code.Rmd" target="_blank">7247efe</a>
+</td>
+<td style="text-align:left;">
+Dongyue Xie
+</td>
+<td style="text-align:left;">
+2018-12-09
+</td>
+<td style="text-align:left;">
+wflow_publish(“analysis/code.Rmd”)
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+html
+</td>
+<td style="text-align:left;">
+<a href="https://cdn.rawgit.com/DongyueXie/stat349/e33f16df10f79eb1406958273ae6f5561c970b7a/docs/code.html" target="_blank">e33f16d</a>
+</td>
+<td style="text-align:left;">
+Dongyue Xie
+</td>
+<td style="text-align:left;">
+2018-12-06
+</td>
+<td style="text-align:left;">
+Build site.
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Rmd
+</td>
+<td style="text-align:left;">
 <a href="https://github.com/DongyueXie/stat349/blob/93771b8956d70417ba13a5771cc8b4430e029cfb/analysis/code.Rmd" target="_blank">93771b8</a>
 </td>
 <td style="text-align:left;">
@@ -414,12 +449,9 @@ wflow_publish(“analysis/code.Rmd”)
 <hr />
 <div id="plots" class="section level1">
 <h1>Plots</h1>
-<pre class="r"><code>library(lme4)</code></pre>
-<pre><code>Loading required package: Matrix</code></pre>
-<pre class="r"><code>library(MCMCglmm)</code></pre>
-<pre><code>Loading required package: coda</code></pre>
-<pre><code>Loading required package: ape</code></pre>
-<pre class="r"><code>datax=read.csv(&#39;/Users/dongyue/Documents/phd y1t1/data analysis/archive_edi/Reich2018NaturePaperDataAug2018.csv&#39;)
+<pre class="r"><code>library(lme4)
+library(MCMCglmm)
+datax=read.csv(&#39;/Users/dongyue/Documents/phd y1t1/data analysis/archive_edi/Reich2018NaturePaperDataAug2018.csv&#39;)
 datax=datax[-c(25,26,580),]
 colnames(datax)[3]=&#39;trt&#39;
 colnames(datax)[4]=&#39;plot&#39;
@@ -435,33 +467,68 @@ datax$species2=factor(ifelse(datax$species %in% needle,&#39;needle&#39;,&#39;bro
 
 ##plot boxplot of trt vs ps acroos species*site
 
-par(mfrow=c(2,2))
+par(mfrow=c(2,3))
 boxplot(ps~trt,data=datax[datax$site==&#39;hwrc&#39;&amp;datax$species2==&#39;broad&#39;,],
-        main=&#39;HWRC-broadleaf&#39;,ylab=&#39;Photosynthesis&#39;)
+        main=&#39;HWRC-broad&#39;,ylab=&#39;Photosynthesis&#39;)
 boxplot(ps~trt,data=datax[datax$site==&#39;hwrc&#39;&amp;datax$species2==&#39;needle&#39;,],
-        main=&#39;HWRC-needleleaf&#39;,ylab=&#39;Photosynthesis&#39;)
-boxplot(ps~trt,data=datax[datax$site==&#39;cfc&#39;&amp;datax$species2==&#39;broad&#39;,],
-        main=&#39;CFC-broadleaf&#39;,ylab=&#39;Photosynthesis&#39;)
-boxplot(ps~trt,data=datax[datax$site==&#39;cfc&#39;&amp;datax$species2==&#39;needle&#39;,],
-        main=&#39;CFC-needleleaf&#39;,ylab=&#39;Photosynthesis&#39;)</code></pre>
-<p><img src="figure/code.Rmd/unnamed-chunk-1-1.png" width="672" style="display: block; margin: auto;" /></p>
-<pre class="r"><code>par(mfrow=c(2,2))
-boxplot(gs~trt,data=datax[datax$site==&#39;hwrc&#39;&amp;datax$species2==&#39;broad&#39;,],
-        main=&#39;HWRC-broadleaf&#39;,ylab=&#39;diffusive conductance&#39;)
-boxplot(gs~trt,data=datax[datax$site==&#39;hwrc&#39;&amp;datax$species2==&#39;needle&#39;,],
-        main=&#39;HWRC-needleleaf&#39;,ylab=&#39;diffusive conductance&#39;)
-boxplot(gs~trt,data=datax[datax$site==&#39;cfc&#39;&amp;datax$species2==&#39;broad&#39;,],
-        main=&#39;CFC-broadleaf&#39;,ylab=&#39;diffusive conductance&#39;)
-boxplot(gs~trt,data=datax[datax$site==&#39;cfc&#39;&amp;datax$species2==&#39;needle&#39;,],
-        main=&#39;CFC-needleleaf&#39;,ylab=&#39;diffusive conductance&#39;)</code></pre>
-<p><img src="figure/code.Rmd/unnamed-chunk-1-2.png" width="672" style="display: block; margin: auto;" /></p>
-<pre class="r"><code>par(mfrow=c(1,2))
+        main=&#39;HWRC-needle&#39;,ylab=&#39;Photosynthesis&#39;)
 boxplot(water~trt,data=datax[datax$site==&#39;hwrc&#39;,],
         main=&#39;HWRC&#39;,ylab=&#39;soil water&#39;)
 
+
+boxplot(ps~trt,data=datax[datax$site==&#39;cfc&#39;&amp;datax$species2==&#39;broad&#39;,],
+        main=&#39;CFC-broad&#39;,ylab=&#39;Photosynthesis&#39;)
+boxplot(ps~trt,data=datax[datax$site==&#39;cfc&#39;&amp;datax$species2==&#39;needle&#39;,],
+        main=&#39;CFC-needle&#39;,ylab=&#39;Photosynthesis&#39;)
+
+
+#par(mfrow=c(2,2))
+#boxplot(gs~trt,data=datax[datax$site==&#39;hwrc&#39;&amp;datax$species2==&#39;broad&#39;,],
+#        main=&#39;HWRC-broadleaf&#39;,ylab=&#39;diffusive conductance&#39;)
+#boxplot(gs~trt,data=datax[datax$site==&#39;hwrc&#39;&amp;datax$species2==&#39;needle&#39;,],
+#        main=&#39;HWRC-needleleaf&#39;,ylab=&#39;diffusive conductance&#39;)
+#boxplot(gs~trt,data=datax[datax$site==&#39;cfc&#39;&amp;datax$species2==&#39;broad&#39;,],
+#        main=&#39;CFC-broadleaf&#39;,ylab=&#39;diffusive conductance&#39;)
+#boxplot(gs~trt,data=datax[datax$site==&#39;cfc&#39;&amp;datax$species2==&#39;needle&#39;,],
+#        main=&#39;CFC-needleleaf&#39;,ylab=&#39;diffusive conductance&#39;)
+
+
+#par(mfrow=c(1,2))
+
+
 boxplot(water~trt,data=datax[datax$site==&#39;cfc&#39;,],
         main=&#39;CFC&#39;,ylab=&#39;soil water&#39;)</code></pre>
-<p><img src="figure/code.Rmd/unnamed-chunk-1-3.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="figure/code.Rmd/unnamed-chunk-1-1.png" width="672" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of unnamed-chunk-1-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/DongyueXie/stat349/blob/e33f16df10f79eb1406958273ae6f5561c970b7a/docs/figure/code.Rmd/unnamed-chunk-1-1.png" target="_blank">e33f16d</a>
+</td>
+<td style="text-align:left;">
+Dongyue Xie
+</td>
+<td style="text-align:left;">
+2018-12-06
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 <pre class="r"><code>##########################
 #PLOT OF photosynthesis vs vwc
 species=c(&quot;aceru&quot;, &quot;acesa&quot;, &#39;betpa&#39;, &quot;quema&quot;, &quot;queru&quot;, &#39;poptr&#39;, &#39;rhaca&#39;, &#39;abiba&#39;, &#39;picgl&#39;, &quot;pinba&quot;, &quot;pinst&quot;)
@@ -482,8 +549,38 @@ for (sp in species) {
 
 #plot of species2: ps vs water</code></pre>
 <p><img src="figure/code.Rmd/unnamed-chunk-2-1.png" width="960" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of unnamed-chunk-2-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/DongyueXie/stat349/blob/e33f16df10f79eb1406958273ae6f5561c970b7a/docs/figure/code.Rmd/unnamed-chunk-2-1.png" target="_blank">e33f16d</a>
+</td>
+<td style="text-align:left;">
+Dongyue Xie
+</td>
+<td style="text-align:left;">
+2018-12-06
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
 <pre class="r"><code>species2=c(&#39;broad&#39;,&#39;needle&#39;)
-par(mfrow=c(1,2))
+par(mfcol=c(2,3))
 
 for (sp in species2) {
   dat=datax[datax$species2==sp,]
@@ -495,9 +592,10 @@ for (sp in species2) {
   xx=seq(0.05,0.27,length.out = 100)
   lines(amb$model$water,amb$fitted.values,col=4,lwd=2)
   lines(warm$model$water,warm$fitted.values,col=2,lwd=2)
-}</code></pre>
-<p><img src="figure/code.Rmd/unnamed-chunk-3-1.png" width="672" style="display: block; margin: auto;" /></p>
-<pre class="r"><code>for (sp in species2) {
+  legend(&#39;topleft&#39;,c(&#39;ambient&#39;,&#39;warmed&#39;),lty=c(1,1),col=c(4,2))
+}
+
+for (sp in species2) {
   dat=datax[datax$species2==sp,]
   amb=lm(gs~water,data=dat[dat$trt==&#39;ambient&#39;,])
   
@@ -507,11 +605,65 @@ for (sp in species2) {
   xx=seq(0.05,0.27,length.out = 100)
   lines(amb$model$water,amb$fitted.values,col=4,lwd=2)
   lines(warm$model$water,warm$fitted.values,col=2,lwd=2)
-}</code></pre>
-<p><img src="figure/code.Rmd/unnamed-chunk-3-2.png" width="672" style="display: block; margin: auto;" /></p>
-<pre class="r"><code>##################
+  legend(&#39;topleft&#39;,c(&#39;ambient&#39;,&#39;warmed&#39;),lty=c(1,1),col=c(4,2))
+}
 
-datas=na.omit(datax)
+
+pp=levels(datax$plot)
+ll=lm(ps~water,data=datax[datax$plot==pp[1],])
+plot(ll$model$water,ll$fitted.values,type=&#39;l&#39;,ylim=c(4,17),xlim=c(0.05,0.27),col=2,ylab=&#39;Photosynthesis&#39;,xlab=&#39;soil water content&#39;,
+     main=&#39;plot&#39;)
+legend(&#39;bottomright&#39;,c(&#39;ambient&#39;,&#39;warmed&#39;),lty=c(1,1),col=c(4,2))
+
+for (p in pp[-1]) {
+    ll=lm(ps~water,data=datax[datax$plot==p,])
+    if(datax[datax$plot==p,][1,]$trt==&#39;ambient&#39;){cc=4}else{cc=2}
+    lines(ll$model$water,ll$fitted.values,col=cc)
+}
+
+pp=levels(datax$block)
+ll=lm(ps~water,data=datax[datax$block==pp[1],])
+plot(ll$model$water,ll$fitted.values,type=&#39;l&#39;,ylim=c(4,17),xlim=c(0.05,0.27),col=1,ylab=&#39;Photosynthesis&#39;,xlab=&#39;soil water content&#39;,
+     main=&#39;block&#39;)
+
+
+for (p in pp[-1]) {
+  ll=lm(ps~water,data=datax[datax$block==p,])
+  
+  lines(ll$model$water,ll$fitted.values,col=1)
+}</code></pre>
+<p><img src="figure/code.Rmd/unnamed-chunk-3-1.png" width="576" style="display: block; margin: auto;" /></p>
+<details> <summary><em>Expand here to see past versions of unnamed-chunk-3-1.png:</em></summary>
+<table style="border-collapse:separate; border-spacing:5px;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Version
+</th>
+<th style="text-align:left;">
+Author
+</th>
+<th style="text-align:left;">
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+<a href="https://github.com/DongyueXie/stat349/blob/e33f16df10f79eb1406958273ae6f5561c970b7a/docs/figure/code.Rmd/unnamed-chunk-3-1.png" target="_blank">e33f16d</a>
+</td>
+<td style="text-align:left;">
+Dongyue Xie
+</td>
+<td style="text-align:left;">
+2018-12-06
+</td>
+</tr>
+</tbody>
+</table>
+<p></details></p>
+<pre class="r"><code>datas=na.omit(datax)
 datas$ci=datas$ci
 #year:doy as factor
 datas$day=factor(datas$year):factor(datas$doy)
@@ -552,23 +704,20 @@ trtwarmed:water              0.63       0.11    5.58</code></pre>
 </div>
 <div id="model-3-species-random" class="section level1">
 <h1>Model 3: species random</h1>
-<pre class="r"><code>mod3=lmer(ps~trt*(water+ci)+tleaf+VPG+(1|day)+(1|block)+(1|plot)+(1|species2),data=datas)</code></pre>
-<pre><code>Warning: Some predictor variables are on very different scales: consider
-rescaling</code></pre>
-<pre class="r"><code>ss.mod3=summary(mod3)</code></pre>
+<pre class="r"><code>mod3=lmer(ps~trt*(water+ci)+VPG+(1|day)+(1|block)+(1|plot)+(1|species2),data=datas)
+ss.mod3=summary(mod3)</code></pre>
 <pre class="r"><code>round(ss.mod3$coefficients,2)</code></pre>
 <pre><code>                Estimate Std. Error t value
-(Intercept)         5.84       1.77    3.31
-trtwarmed          -5.84       1.12   -5.21
-water              19.92       4.95    4.03
-ci                 -0.01       0.00   -3.36
-tleaf               0.51       0.05   10.27
-VPG                -5.41       0.33  -16.49
-trtwarmed:water    19.84       4.74    4.19
-trtwarmed:ci        0.02       0.00    4.08</code></pre>
+(Intercept)        15.75       1.72    9.14
+trtwarmed          -6.96       1.14   -6.11
+water              21.92       5.46    4.02
+ci                 -0.02       0.00   -4.31
+VPG                -3.04       0.23  -13.38
+trtwarmed:water    21.71       4.86    4.46
+trtwarmed:ci        0.02       0.00    4.85</code></pre>
 <pre class="r"><code>round(c(sqrt(unlist(ss.mod3$varcor)),ss.mod3$sigma),2)</code></pre>
 <pre><code>     day     plot    block species2          
-    2.12     0.28     0.48     1.11     4.47 </code></pre>
+    2.79     0.29     0.68     1.33     4.56 </code></pre>
 <div id="conditional-independence" class="section level2">
 <h2>Conditional independence</h2>
 <pre class="r"><code>mm=lmer(ps~water+trt+(1|day)+(1|block)+(1|plot)+(1|species2),data=datas,REML = 0)
@@ -614,8 +763,6 @@ mulmod1=MCMCglmm(cbind(ps,water)~trait*trt,
                       prior = prior2,
                       family = c(&quot;gaussian&quot;,&quot;gaussian&quot;),
                       data=datas[datas$species2==&#39;needle&#39;,],nitt=15000,burnin = 5000,thin = 10,verbose = F)</code></pre>
-<pre><code>Warning: &#39;cBind&#39; is deprecated.
- Since R version 3.2.0, base&#39;s cbind() should work fine with S4 objects</code></pre>
 <pre class="r"><code>round(summary(mulmod1)$solutions[,1:3],3)</code></pre>
 <pre><code>                     post.mean l-95% CI u-95% CI
 (Intercept)             11.103    9.066   13.184
@@ -623,27 +770,8 @@ traitwater             -10.931  -13.067   -8.947
 trtwarmed               -1.857   -2.755   -0.823
 traitwater:trtwarmed     1.820    0.791    2.717</code></pre>
 <p>Cov and Cor - day</p>
-<pre class="r"><code>poster.mode=apply(mulmod1$VCV, 2, posterior.mode)</code></pre>
-<pre><code>Warning in FUN(newX[, i], ...): posterior.mode expecting mcmc object
-
-Warning in FUN(newX[, i], ...): posterior.mode expecting mcmc object
-
-Warning in FUN(newX[, i], ...): posterior.mode expecting mcmc object
-
-Warning in FUN(newX[, i], ...): posterior.mode expecting mcmc object
-
-Warning in FUN(newX[, i], ...): posterior.mode expecting mcmc object
-
-Warning in FUN(newX[, i], ...): posterior.mode expecting mcmc object
-
-Warning in FUN(newX[, i], ...): posterior.mode expecting mcmc object
-
-Warning in FUN(newX[, i], ...): posterior.mode expecting mcmc object
-
-Warning in FUN(newX[, i], ...): posterior.mode expecting mcmc object
-
-Warning in FUN(newX[, i], ...): posterior.mode expecting mcmc object</code></pre>
-<pre class="r"><code>cov.day=matrix(poster.mode[1:4],2,2)
+<pre class="r"><code>poster.mode=apply(mulmod1$VCV, 2, posterior.mode)
+cov.day=matrix(poster.mode[1:4],2,2)
 rownames(cov.day)=c(&#39;PS&#39;,&#39;Water&#39;)
 colnames(cov.day)=c(&#39;PS&#39;,&#39;Water&#39;)
 round(cov.day,3)</code></pre>
@@ -690,27 +818,8 @@ traitwater             -10.428  -11.589   -9.176
 trtwarmed                0.454   -0.062    0.971
 traitwater:trtwarmed    -0.490   -1.003    0.026</code></pre>
 <p>Cov and Cor - day</p>
-<pre class="r"><code>poster.mode=apply(mulmod2$VCV, 2, posterior.mode)</code></pre>
-<pre><code>Warning in FUN(newX[, i], ...): posterior.mode expecting mcmc object
-
-Warning in FUN(newX[, i], ...): posterior.mode expecting mcmc object
-
-Warning in FUN(newX[, i], ...): posterior.mode expecting mcmc object
-
-Warning in FUN(newX[, i], ...): posterior.mode expecting mcmc object
-
-Warning in FUN(newX[, i], ...): posterior.mode expecting mcmc object
-
-Warning in FUN(newX[, i], ...): posterior.mode expecting mcmc object
-
-Warning in FUN(newX[, i], ...): posterior.mode expecting mcmc object
-
-Warning in FUN(newX[, i], ...): posterior.mode expecting mcmc object
-
-Warning in FUN(newX[, i], ...): posterior.mode expecting mcmc object
-
-Warning in FUN(newX[, i], ...): posterior.mode expecting mcmc object</code></pre>
-<pre class="r"><code>cov.day=matrix(poster.mode[1:4],2,2)
+<pre class="r"><code>poster.mode=apply(mulmod2$VCV, 2, posterior.mode)
+cov.day=matrix(poster.mode[1:4],2,2)
 rownames(cov.day)=c(&#39;PS&#39;,&#39;Water&#39;)
 colnames(cov.day)=c(&#39;PS&#39;,&#39;Water&#39;)
 round(cov.day,3)</code></pre>
